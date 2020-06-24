@@ -1,8 +1,10 @@
-# SNMP Trap Receiver Extension
+# GarageSale
 ## Overview
-This extension runs as a continuous task, managed by the AppDynamics Machine Agent.  It is capable of receiving SNMP TRAP and INFORM PDUs for SNMP v1, v2c, and v3.  The extension also generates metrics regarding incoming SNMP messages and outgoing events to the AppDynamics Controller to determine/monitor its pipeline health.
+This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM agent (AppDynamics).
+There is no guarantee that this applicaiton is built to any best practices or standards, and in certain cases is explicitly designed to not be performant, and so from the angle of tracing and monitoring, it's all good.
  
 ## Prerequisites
+// TODO
 In order to use this extension, you do need a [Standalone __JAVA__ Machine Agent](https://docs.appdynamics.com/display/PRO45/Standalone+Machine+Agents) or [__SIM__ Agent](https://docs.appdynamics.com/display/PRO45/Server+Visibility).  For more details on downloading these products, please  visit https://download.appdynamics.com/.
 
 In order to build this extension, you'll need:

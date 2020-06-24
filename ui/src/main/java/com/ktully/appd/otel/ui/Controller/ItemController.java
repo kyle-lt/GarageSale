@@ -1,0 +1,328 @@
+package com.ktully.appd.otel.ui.Controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import com.ktully.appd.otel.ui.Model.Item;
+
+import io.grpc.Context;
+import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.trace.Span;
+import io.opentelemetry.trace.Tracer;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Controller
+public class ItemController {
+
+	private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
+
+	@Value("${item.api.url}")
+	private String itemApiUrl;
+	@Value("${item.api.port}")
+	private String itemApiPort;
+	
+	Item item = null;
+
+	@Autowired
+	Tracer tracer;
+
+	@RequestMapping("/items")
+	public String items(Model model) {
+
+		// Start a Parent Span for "/items"
+		Span parentSpan = tracer.spanBuilder("/items").setSpanKind(Span.Kind.CLIENT).startSpan();
+		try (Scope scope = tracer.withSpan(parentSpan)) {
+
+			// Build full URI for API call
+			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
+
+			/*
+			 * Configuration for Context Propagation to be done via HttpHeaders injection
+			 */
+			HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
+				@Override
+				public void set(HttpHeaders carrier, String key, String value) {
+					logger.debug("RestTemplate - Adding Header with Key = " + key);
+					logger.debug("RestTemplate - Adding Header with Value = " + value);
+					carrier.add(key, value);
+				}
+			};
+
+			/*
+			 * *****************************************************************************
+			 * *** START *** RestTemplate for nostalgia ***
+			 */
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+
+			// Start a Span for (and send) RestTemplate
+			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+					.startSpan();
+			try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+				// Add some important info to our Span
+				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
+																				// Jaeger
+				restTemplateSpan.setAttribute("items-RT-Key", "items-RT-Value");
+
+				// Execute the header injection that we defined above in the Setter and
+				// create HttpEntity to hold the headers (and pass to RestTemplate)
+				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), headers,
+						httpHeadersSetter);
+				logger.debug("**** Here are the headers: " + headers.toString());
+				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+
+				// Make outgoing call via RestTemplate
+				ResponseEntity<List<Item>> itemResponse = restTemplate.exchange(fullItemApiUrl + "/items",
+						HttpMethod.GET, entity, new ParameterizedTypeReference<List<Item>>() {
+						});
+
+				// Capture the result that could be passed to our ThymeLeaf view
+				List<Item> listItems = itemResponse.getBody();
+			} catch (Exception e) {
+				restTemplateSpan.addEvent("error");
+				restTemplateSpan.addEvent(e.toString());
+				restTemplateSpan.setAttribute("error", true);
+				logger.error("Error during OT section, here it is!", e);
+				return "error";
+			} finally {
+				restTemplateSpan.end();
+			}
+			/*
+			 * *****************************************************************************
+			 * *** END *** RestTemplate for nostalgia ***
+			 */
+
+			/*
+			 * Configuration for Context Propagation to be done via injection into WebClient
+			 * Builder headers
+			 */
+			HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
+				@Override
+				public void set(Builder carrier, String key, String value) {
+					logger.debug("WebClient - Adding Header with Key = " + key);
+					logger.debug("WebClient - Adding Header with Value = " + value);
+					carrier.defaultHeader(key, value);
+
+				}
+			};
+			/*
+			 * *****************************************************************************
+			 * *** START **** WebClient for future-proofing ***
+			 */
+
+			// Create a builder to be injected with Context Propagation headers
+			Builder webClientBuilder = WebClient.builder();
+
+			// Start a Span for (and send) WebClient
+			Span webClientSpan = tracer.spanBuilder("/item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
+				// Add some important info to our Span
+				webClientSpan.addEvent("Calling item-api via WebClient"); // This ends up in "logs" section in Jaeger
+				webClientSpan.setAttribute("items-WC-Key", "items-WC-Value");
+
+				// Execute the header injection that we defined above in the Setter and
+				// create HttpEntity to hold the headers (and pass to RestTemplate)
+				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), webClientBuilder,
+						webClientSetter);
+
+				// Make outgoing call via RestTemplate
+				WebClient webClient = webClientBuilder.baseUrl(fullItemApiUrl)
+						.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
+
+				Flux<Item> fluxItems = webClient.get().uri("/items").retrieve().bodyToFlux(Item.class);
+
+				// Capture the result that could be passed to our ThymeLeaf view - huge blocking call!
+				List<Item> fluxListItems = fluxItems.collectList().block();
+
+				// Add the resulting list to our ThymeLeaf View
+				model.addAttribute("listItems", fluxListItems);
+
+				// Return the ThymeLeaf View
+				return "items";
+			} catch (Exception e) {
+				webClientSpan.addEvent("error");
+				webClientSpan.addEvent(e.toString());
+				webClientSpan.setAttribute("error", true);
+				logger.error("Error during OT section, here it is!", e);
+				return "error";
+			} finally {
+				webClientSpan.end();
+			}
+			/*
+			 * *****************************************************************************
+			 * *** END **** WebClient for future-proofing ***
+			 */
+		} finally {
+			parentSpan.end();
+		}
+
+	}
+
+	@RequestMapping("items/{id}")
+	public String getItem(@PathVariable("id") String id, Model model) {
+
+		// Start a Parent Span for "/items/{id}"
+		Span parentSpan = tracer.spanBuilder("/items/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
+		try (Scope scope = tracer.withSpan(parentSpan)) {
+
+			// Build full URI for API call
+			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
+
+			/*
+			 * Configuration for Context Propagation to be done via HttpHeaders injection
+			 */
+			HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
+				@Override
+				public void set(HttpHeaders carrier, String key, String value) {
+					logger.debug("RestTemplate - Adding Header with Key = " + key);
+					logger.debug("RestTemplate - Adding Header with Value = " + value);
+					carrier.add(key, value);
+				}
+			};
+
+			/*
+			 * *****************************************************************************
+			 * *** START *** RestTemplate for nostalgia ***
+			 */
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+
+			// Start a Span for (and send) RestTemplate
+			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+					.startSpan();
+			try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+				// Add some important info to our Span
+				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
+																				// Jaeger
+				restTemplateSpan.setAttribute("items-RT-Key", "items-RT-Value");
+
+				// Execute the header injection that we defined above in the Setter and
+				// create HttpEntity to hold the headers (and pass to RestTemplate)
+				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), headers,
+						httpHeadersSetter);
+				logger.debug("**** Here are the headers: " + headers.toString());
+				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+
+				// Make outgoing call via RestTemplate
+				ResponseEntity<Item> itemResponse = restTemplate.exchange(fullItemApiUrl + "/items/" + id,
+						HttpMethod.GET, entity, new ParameterizedTypeReference<Item>() {
+						});
+
+				// Capture the result that could be passed to our ThymeLeaf view
+				Item itemNotUsed = itemResponse.getBody();
+				
+				logger.debug("itemNotUsed.id = " + itemNotUsed.getId());
+				logger.debug("itemNotUsed.category = " + itemNotUsed.getCategory());
+				logger.debug("itemNotUsed.name = " + itemNotUsed.getName());
+				logger.debug("itemNotUsed.price = " + itemNotUsed.getPrice());
+				
+				//model.addAttribute("item", itemNotUsed);
+				
+				//return "item";
+			} catch (Exception e) {
+				restTemplateSpan.addEvent("error");
+				restTemplateSpan.addEvent(e.toString());
+				restTemplateSpan.setAttribute("error", true);
+				logger.error("Error during OT section, here it is!", e);
+				return "error";
+			} finally {
+				restTemplateSpan.end();
+			}
+			/*
+			 * *****************************************************************************
+			 * *** END *** RestTemplate for nostalgia ***
+			 */
+
+			/*
+			 * Configuration for Context Propagation to be done via injection into WebClient
+			 * Builder headers
+			 */
+			HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
+				@Override
+				public void set(Builder carrier, String key, String value) {
+					logger.debug("WebClient - Adding Header with Key = " + key);
+					logger.debug("WebClient - Adding Header with Value = " + value);
+					carrier.defaultHeader(key, value);
+
+				}
+			};
+			/*
+			 * *****************************************************************************
+			 * *** START **** WebClient for future-proofing ***
+			 */
+
+			// Create a builder to be injected with Context Propagation headers
+			Builder webClientBuilder = WebClient.builder();
+
+			// Start a Span for (and send) WebClient
+			Span webClientSpan = tracer.spanBuilder("/item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
+				// Add some important info to our Span
+				webClientSpan.addEvent("Calling item-api via WebClient"); // This ends up in "logs" section in Jaeger
+				webClientSpan.setAttribute("items-WC-Key", "items-WC-Value");
+
+				// Execute the header injection that we defined above in the Setter and
+				// create HttpEntity to hold the headers (and pass to RestTemplate)
+				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), webClientBuilder,
+						webClientSetter);
+
+				// Make outgoing call via RestTemplate
+				WebClient webClient = webClientBuilder.baseUrl(fullItemApiUrl)
+						.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
+
+				Flux<Item> fluxItems = webClient.get().uri("/items/" + id).retrieve().bodyToFlux(Item.class);
+				 
+				Item item = fluxItems.blockFirst();
+				
+				logger.debug("item.id = " + item.getId());
+				logger.debug("item.category = " + item.getCategory());
+				logger.debug("item.name = " + item.getName());
+				logger.debug("item.price = " + item.getPrice());
+				
+				// Add the resulting list to our ThymeLeaf View
+				model.addAttribute("item", item);
+
+				// Return the ThymeLeaf View
+				return "item";
+			} catch (Exception e) {
+				webClientSpan.addEvent("error");
+				webClientSpan.addEvent(e.toString());
+				webClientSpan.setAttribute("error", true);
+				logger.error("Error during OT section, here it is!", e);
+				return "error";
+			} finally {
+				webClientSpan.end();
+			}
+			/*
+			 * *****************************************************************************
+			 * *** END **** WebClient for future-proofing ***
+			 */
+		} finally {
+			parentSpan.end();
+			
+		}
+
+	}
+
+}

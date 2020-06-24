@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/headFiles :: headFiles">
+    <title>Garage Sale Items</title>
+</head>
+<body>
+	<nav th:replace="fragments/header :: header"></nav>
+	<div class="container">
+      <div class="hero-unit">
+        <h1>Item</h1>
+		<table style="width:100%">
+		    <thead>
+        		<tr>
+            		<th> Id </th>
+					<th> Category </th>
+            		<th> Name </th>
+					<th> Price </th>
+        		</tr>
+    		</thead>
+			<tbody>
+			<tr>
+				<td><span th:text="${item.id}"> Id </span></td>
+            	<td><span th:text="${item.category}"> Category </span></td>
+				<td><span th:text="${item.name}"> Name </span></td>
+				<td><span th:text="${item.price}"> Price </span></td>
+			</tr>
+			</tbody>
+		</table>
+      </div>
+      <div th:replace="fragments/footer :: footer"></div>
+    </div>
+</body>
+</html>

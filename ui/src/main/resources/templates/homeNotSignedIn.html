@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+  <head th:insert="fragments/headFiles :: headFiles">
+  </head>
+  <body>
+    <nav th:replace="fragments/header :: header"></nav>
+    <div class="container">
+      <div class="hero-unit">
+        <h1>Garage Sale</h1>
+		<h2>Welcome to the Garage Sale! </h2>
+        <p>
+          Get started by checking out the items for sale.
+        </p>
+        <p>
+          <a href="/items" th:href="@{/items}" class="btn btn-large btn-success">Items</a>
+        </p>
+        <p>
+          Or, post your own item.
+        </p>
+        <p>
+          <a href="/post" th:href="@{/post}" class="btn btn-large btn-success">Post</a>
+        </p>
+      </div>
+      <div th:replace="fragments/footer :: footer"></div>
+    </div>
+  </body>
+</html>

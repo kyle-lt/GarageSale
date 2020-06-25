@@ -90,17 +90,17 @@ public class ItemController {
 
 	}
 
-	@GetMapping("/items/{id}")
+	@GetMapping("/item/{id}")
 	private ItemModel getItem(@PathVariable("id") int id) {
 		return itemService.getItemById(id);
 	}
 
-	@DeleteMapping("/items/{id}")
+	@DeleteMapping("/item/{id}")
 	private void deleteItem(@PathVariable("id") int id) {
 		itemService.delete(id);
 	}
 
-	@PostMapping("/items")
+	@PostMapping("/item")
 	private int saveItem(@RequestBody ItemModel itemModel) {
 		itemService.saveOrUpdate(itemModel);
 		return itemModel.getId();

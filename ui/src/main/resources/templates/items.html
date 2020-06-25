@@ -23,7 +23,7 @@
 			</tr>
 			<tr th:each="listItem : ${listItems}">
 				<!--<td><span th:text="${listItem.id}"> Id </span></td>-->
-				<td><a th:href="@{'/items/' + ${listItem.id}}" th:text="${listItem.id}"> Id </a></td>
+				<td><a th:href="@{'/item/' + ${listItem.id}}" th:text="${listItem.id}"> Id </a></td>
             	<td><span th:text="${listItem.category}"> Category </span></td>
 				<td><span th:text="${listItem.name}"> Name </span></td>
 				<td><span th:text="${listItem.price}"> Price </span></td>

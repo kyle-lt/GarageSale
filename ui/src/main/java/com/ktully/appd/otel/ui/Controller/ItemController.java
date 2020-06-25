@@ -179,11 +179,11 @@ public class ItemController {
 
 	}
 
-	@RequestMapping("items/{id}")
+	@RequestMapping("item/{id}")
 	public String getItem(@PathVariable("id") String id, Model model) {
 
 		// Start a Parent Span for "/items/{id}"
-		Span parentSpan = tracer.spanBuilder("/items/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("/item/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
 		try (Scope scope = tracer.withSpan(parentSpan)) {
 
 			// Build full URI for API call
@@ -215,7 +215,7 @@ public class ItemController {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger
-				restTemplateSpan.setAttribute("items-RT-Key", "items-RT-Value");
+				restTemplateSpan.setAttribute("item-RT-Key", "item-RT-Value");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
@@ -225,7 +225,7 @@ public class ItemController {
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 
 				// Make outgoing call via RestTemplate
-				ResponseEntity<Item> itemResponse = restTemplate.exchange(fullItemApiUrl + "/items/" + id,
+				ResponseEntity<Item> itemResponse = restTemplate.exchange(fullItemApiUrl + "/item/" + id,
 						HttpMethod.GET, entity, new ParameterizedTypeReference<Item>() {
 						});
 
@@ -280,7 +280,7 @@ public class ItemController {
 			try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 				// Add some important info to our Span
 				webClientSpan.addEvent("Calling item-api via WebClient"); // This ends up in "logs" section in Jaeger
-				webClientSpan.setAttribute("items-WC-Key", "items-WC-Value");
+				webClientSpan.setAttribute("item-WC-Key", "item-WC-Value");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
@@ -291,7 +291,7 @@ public class ItemController {
 				WebClient webClient = webClientBuilder.baseUrl(fullItemApiUrl)
 						.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
 
-				Flux<Item> fluxItems = webClient.get().uri("/items/" + id).retrieve().bodyToFlux(Item.class);
+				Flux<Item> fluxItems = webClient.get().uri("/item/" + id).retrieve().bodyToFlux(Item.class);
 				 
 				Item item = fluxItems.blockFirst();
 				

@@ -1,16 +1,17 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org">
 <head th:insert="fragments/headFiles :: headFiles">
-    <title>Post Garage Sale Items</title>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<nav th:replace="fragments/header :: header"></nav>
-	<div class="container">
-      <div class="hero-unit">
-        <h1>Post Your Item</h1>
-	    <p>Well, not much to show right now...</p>
-      </div>
-      <div th:replace="fragments/footer :: footer"></div>
-    </div>
+	<h1>Form</h1>
+    <form action="#" th:action="@{/post}" th:object="${item}" method="post">
+    	<p>Category: <input type="text" th:field="*{category}" /></p>
+        <p>Name: <input type="text" th:field="*{name}" /></p>
+        <p>Price: <input type="text" th:field="*{price}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+  <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

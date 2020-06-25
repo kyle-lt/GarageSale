@@ -20,8 +20,14 @@ table {
   width: 100%;
 }
 
-td, th {
-  border: 1px solid #dddddd;
+td {
+  border: 1px solid #005FFF;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  border: 1px solid #666666;
   text-align: left;
   padding: 8px;
 }

@@ -1,7 +1,22 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/headFiles :: headFiles">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
     <title>Garage Sale Items</title>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+        var appKey = /*[[${appdbrumconfigappkey}]]*/ 'default';
+        var adrumExtUrlHttp = /*[[${appdbrumconfigadrumurlhttp}]]*/ 'default';
+        var adrumExtUrlHttps = /*[[${appdbrumconfigadrumurlhttps}]]*/ 'default';
+        var beaconUrlHttp = /*[[${appdbrumconfigbeaconhttp}]]*/ 'default';
+        var beaconUrlHttps = /*[[${appdbrumconfigbeaconhttps}]]*/ 'default';
+      /*]]>*/
+    </script>
+	<script type="text/javascript" src="/script/appd.js"></script>
+	<script type="text/javascript" src="https://cdn.appdynamics.com/adrum/adrum-latest.js"></script>
+  	<link rel="stylesheet" th:href="@{~/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{~/css/main.css}"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 	<nav th:replace="fragments/header :: header"></nav>
@@ -18,11 +33,7 @@
         		</tr>
     		</thead>
 			<tbody>
-			<tr th:if="${listItems.empty}">
-				<td colspan="2"> No Items Available </td>
-			</tr>
 			<tr th:each="listItem : ${listItems}">
-				<!--<td><span th:text="${listItem.id}"> Id </span></td>-->
 				<td><a th:href="@{'/item/' + ${listItem.id}}" th:text="${listItem.id}"> Id </a></td>
             	<td><span th:text="${listItem.category}"> Category </span></td>
 				<td><span th:text="${listItem.name}"> Name </span></td>

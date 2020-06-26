@@ -101,9 +101,38 @@ public class ItemController {
 	}
 
 	@PostMapping("/item")
-	private int saveItem(@RequestBody ItemModel itemModel) {
-		itemService.saveOrUpdate(itemModel);
-		return itemModel.getId();
+	private int saveItem(@RequestBody ItemModel itemModel, @RequestHeader Map<String, String> headers) {
+		
+		Context extractedContext = null;
+		try {
+			logger.debug("Trying to extact Context Propagation Headers");
+			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), headers,
+					getter);
+		} catch (Exception e) {
+			logger.error("Exception caught while extracting Context Propagators", e);
+		}
+
+		Span serverSpan = null;
+		try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
+			// Automatically use the extracted SpanContext as parent.
+			logger.debug("Trying to build Span and then make DB call.");
+			serverSpan = tracer.spanBuilder("/item-api/item").setSpanKind(Span.Kind.SERVER).startSpan();
+			// Add the attributes defined in the Semantic Conventions
+			serverSpan.setAttribute("http.method", "POST");
+			serverSpan.setAttribute("http.scheme", "http");
+			serverSpan.setAttribute("http.host", "item-api:8081");
+			serverSpan.setAttribute("http.target", "/item");
+			
+			return itemService.saveOrUpdate(itemModel).getId();
+		} catch (Exception e) {
+			logger.error("Exception caught attempting to create Span", e);
+			return itemService.saveOrUpdate(itemModel).getId();
+		} finally {
+			if (serverSpan != null) {
+				serverSpan.end();
+			}
+		}
+		
 	}
 
 }

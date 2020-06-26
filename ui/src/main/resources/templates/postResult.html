@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
       lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>GarageSale Item</title>
+<head th:insert="fragments/headFiles :: headFiles">
+    <title>Post Result</title>
     <script th:inline="javascript">
       /*<![CDATA[*/
         var appKey = /*[[${appdbrumconfigappkey}]]*/ 'default';
@@ -14,35 +14,20 @@
     </script>
 	<script type="text/javascript" src="/script/appd.js"></script>
 	<script type="text/javascript" src="https://cdn.appdynamics.com/adrum/adrum-latest.js"></script>
-  	<link rel="stylesheet" th:href="@{~/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{~/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{~/css/main.css}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<nav th:replace="fragments/header :: header" />
-	<div class="container">
-      <div class="hero-unit">
-        <h1>Item</h1>
-		<table style="width:100%">
-		    <thead>
-        		<tr>
-            		<th> Id </th>
-					<th> Category </th>
-            		<th> Name </th>
-					<th> Price </th>
-        		</tr>
-    		</thead>
-			<tbody>
-			<tr>
-				<td><span th:text="${item.id}"> Id </span></td>
-            	<td><span th:text="${item.category}"> Category </span></td>
-				<td><span th:text="${item.name}"> Name </span></td>
-				<td><span th:text="${item.price}"> Price </span></td>
-			</tr>
-			</tbody>
-		</table>
-      </div>
-      <div th:replace="fragments/footer :: footer"></div>
-    </div>
+	<nav th:replace="fragments/header :: header"></nav>
+	  <div class="container">
+        <div class="hero-unit">
+          <h1>Post Result</h1>
+		    <h2>Success!</h2>
+			  <div>
+				Your item is available <a th:href="@{'/item/' + ${itemId}}">here</a>
+			  </div>
+        </div>
+	  </div>
 </body>
 </html>

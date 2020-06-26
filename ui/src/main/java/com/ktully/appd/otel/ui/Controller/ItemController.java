@@ -42,6 +42,18 @@ public class ItemController {
 	@Value("${item.api.port}")
 	private String itemApiPort;
 	
+	// AppD Browser EUM Configs
+	@Value("${appdbrumconfigappkey}")
+	private String appdbrumconfigappkey;
+	@Value("${appdbrumconfigadrumurlhttp}")
+	private String appdbrumconfigadrumurlhttp;
+	@Value("${appdbrumconfigadrumurlhttps}")
+	private String appdbrumconfigadrumurlhttps;
+	@Value("${appdbrumconfigbeaconhttp}")
+	private String appdbrumconfigbeaconhttp;
+	@Value("${appdbrumconfigbeaconhttps}")
+	private String appdbrumconfigbeaconhttps;
+	
 	Item item = null;
 
 	@Autowired
@@ -157,6 +169,13 @@ public class ItemController {
 
 				// Add the resulting list to our ThymeLeaf View
 				model.addAttribute("listItems", fluxListItems);
+				
+				// AppD Browser EUM Configs
+				model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
+				model.addAttribute("appdbrumconfigadrumurlhttp", appdbrumconfigadrumurlhttp);
+				model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
+				model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
+				model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
 
 				// Return the ThymeLeaf View
 				return "items";
@@ -180,7 +199,7 @@ public class ItemController {
 	}
 
 	@RequestMapping("item/{id}")
-	public String getItem(@PathVariable("id") String id, Model model) {
+	public String item(@PathVariable("id") String id, Model model) {
 
 		// Start a Parent Span for "/items/{id}"
 		Span parentSpan = tracer.spanBuilder("/item/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
@@ -302,6 +321,13 @@ public class ItemController {
 				
 				// Add the resulting list to our ThymeLeaf View
 				model.addAttribute("item", item);
+				
+				// AppD Browser EUM Configs
+				model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
+				model.addAttribute("appdbrumconfigadrumurlhttp", appdbrumconfigadrumurlhttp);
+				model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
+				model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
+				model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
 
 				// Return the ThymeLeaf View
 				return "item";
@@ -320,7 +346,6 @@ public class ItemController {
 			 */
 		} finally {
 			parentSpan.end();
-			
 		}
 
 	}

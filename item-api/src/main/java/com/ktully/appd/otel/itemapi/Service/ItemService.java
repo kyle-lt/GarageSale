@@ -46,8 +46,8 @@ public class ItemService {
 		return itemRepository.findById(id).get();
 	}
 
-	public void saveOrUpdate(ItemModel itemModel) {
-		itemRepository.save(itemModel);
+	public ItemModel saveOrUpdate(ItemModel itemModel) {
+		return itemRepository.save(itemModel);
 	}
 
 	public void delete(int id) {

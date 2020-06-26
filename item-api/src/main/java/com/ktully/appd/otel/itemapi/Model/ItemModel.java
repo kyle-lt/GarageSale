@@ -21,10 +21,6 @@ public class ItemModel {
 	@Column(nullable = false)
 	private Float price;
 	
-	public int getId() {
-		return this.id;
-	}
-	
 	// Setters
 	public void setCategory(String category) {
 		this.category = category;
@@ -39,6 +35,10 @@ public class ItemModel {
 	}
 	
 	// Getters
+	
+	public int getId() {
+		return this.id;
+	}
 	
 	public String getCategory() {
 		return this.category;

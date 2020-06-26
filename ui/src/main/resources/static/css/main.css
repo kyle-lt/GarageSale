@@ -1,5 +1,7 @@
 body {
   padding-top: 5rem;
+  height:100%;
+  min-height:100%;
 }
 .starter-template {
   padding: 3rem 1.5rem;
@@ -34,4 +36,11 @@ th {
 
 tr:nth-child(even) {
   background-color: #dddddd;
+}
+
+footer {
+    clear: both;
+    position: relative;
+    height: 200px;
+    margin-top: -200px;
 }

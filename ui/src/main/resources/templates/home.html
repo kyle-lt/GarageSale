@@ -1,12 +1,45 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>GarageSale Home Page</title>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>GarageSale Home</title>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+        var appKey = /*[[${appdbrumconfigappkey}]]*/ 'default';
+        var adrumExtUrlHttp = /*[[${appdbrumconfigadrumurlhttp}]]*/ 'default';
+        var adrumExtUrlHttps = /*[[${appdbrumconfigadrumurlhttps}]]*/ 'default';
+        var beaconUrlHttp = /*[[${appdbrumconfigbeaconhttp}]]*/ 'default';
+        var beaconUrlHttps = /*[[${appdbrumconfigbeaconhttps}]]*/ 'default';
+      /*]]>*/
+    </script>
+	<script type="text/javascript" src="/script/appd.js"></script>
+	<script type="text/javascript" src="https://cdn.appdynamics.com/adrum/adrum-latest.js"></script>
+  	<link rel="stylesheet" th:href="@{~/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{~/css/main.css}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-    <h1>Welcome to the Garage Sale!</h1>
-	<p th:text="'You are currently identified as ' + ${name} + '!'" />
-	<p>Check out  <a href="/home">Home Page</a></p>
-</body>
+  </head>
+  <body>
+    <nav th:replace="fragments/header :: header"></nav>
+    <div class="container">
+      <div class="hero-unit">
+        <h1>Welcome to the Garage Sale!</h1>
+		<h2>Browse Items</h2>
+        <p>
+          Get started by checking out the items for sale.
+        </p>
+        <p>
+          <a href="/items" th:href="@{/items}" class="btn btn-large btn-success">Items</a>
+        </p>
+		<h2>Post Your Item</h2>        
+		<p>
+          Or, click below to post your own item.
+        </p>
+        <p>
+          <a href="/post" th:href="@{/post}" class="btn btn-large btn-success">Post</a>
+        </p>
+      </div>
+      <div th:replace="fragments/footer :: footer"></div>
+    </div>
+  </body>
 </html>

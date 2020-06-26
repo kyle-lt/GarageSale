@@ -1,17 +1,36 @@
 <!DOCTYPE HTML>
-<html xmlns:th="https://www.thymeleaf.org">
-<head th:insert="fragments/headFiles :: headFiles">
-    <title>Getting Started: Handling Form Submission</title>
+<html xmlns:th="https://www.thymeleaf.org"
+      lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>GarageSale Post Item</title>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+        var appKey = /*[[${appdbrumconfigappkey}]]*/ 'default';
+        var adrumExtUrlHttp = /*[[${appdbrumconfigadrumurlhttp}]]*/ 'default';
+        var adrumExtUrlHttps = /*[[${appdbrumconfigadrumurlhttps}]]*/ 'default';
+        var beaconUrlHttp = /*[[${appdbrumconfigbeaconhttp}]]*/ 'default';
+        var beaconUrlHttps = /*[[${appdbrumconfigbeaconhttps}]]*/ 'default';
+      /*]]>*/
+    </script>
+	<script type="text/javascript" src="/script/appd.js"></script>
+	<script type="text/javascript" src="https://cdn.appdynamics.com/adrum/adrum-latest.js"></script>
+  	<link rel="stylesheet" th:href="@{~/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{~/css/main.css}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h1>Form</h1>
-    <form action="#" th:action="@{/post}" th:object="${item}" method="post">
-    	<p>Category: <input type="text" th:field="*{category}" /></p>
-        <p>Name: <input type="text" th:field="*{name}" /></p>
-        <p>Price: <input type="text" th:field="*{price}" /></p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-    </form>
-  <div th:replace="fragments/footer :: footer"></div>
+    <nav th:replace="fragments/header :: header"></nav>
+    <div class="container">
+      <div class="hero-unit">
+		<h1>Post Your Item!</h1>
+	    <form action="#" th:action="@{/post}" th:object="${item}" method="post">
+	    	<p>Category: <input type="text" th:field="*{category}" /></p>
+	        <p>Name: <input type="text" th:field="*{name}" /></p>
+	        <p>Price: <input type="text" th:field="*{price}" /></p>
+	        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+	    </form>
+      </div>
+	<div th:replace="fragments/footer :: footer"></div>
+    </div>
 </body>
 </html>

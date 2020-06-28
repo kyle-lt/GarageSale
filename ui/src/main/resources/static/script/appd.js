@@ -6,4 +6,9 @@ window['adrum-start-time'] = new Date().getTime();
     config.beaconUrlHttp = beaconUrlHttp;
     config.beaconUrlHttps = beaconUrlHttps;
     config.xd = {enable : false};
+    (function (info) {
+                info.PageView = {
+                    userPageName: pageName
+                }
+            })(config.userEventInfo || (config.userEventInfo = {}));
 })(window['adrum-config'] || (window['adrum-config'] = {}));

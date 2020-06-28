@@ -21,6 +21,9 @@ public class ItemModel {
 	@Column(nullable = false)
 	private Float price;
 	
+	@Column(nullable = true)
+	private String image;
+	
 	// Setters
 	public void setCategory(String category) {
 		this.category = category;
@@ -32,6 +35,10 @@ public class ItemModel {
 	
 	public void setPrice(Float price) {
 		this.price = price;
+	}
+	
+	public void setImage(String image) {
+		this.image = image;
 	}
 	
 	// Getters
@@ -50,6 +57,10 @@ public class ItemModel {
 	
 	public Float getPrice() {
 		return this.price;
+	}
+	
+	public String getImage() {
+		return this.image;
 	}
 
 }

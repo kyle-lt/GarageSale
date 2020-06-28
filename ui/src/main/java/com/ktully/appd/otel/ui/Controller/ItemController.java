@@ -1,5 +1,9 @@
 package com.ktully.appd.otel.ui.Controller;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,6 +40,8 @@ import reactor.core.publisher.Mono;
 public class ItemController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
+	
+	private static String UPLOAD_FOLDER = "/app/images/";
 
 	@Value("${item.api.url}")
 	private String itemApiUrl;
@@ -176,6 +182,7 @@ public class ItemController {
 				model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
 				model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
 				model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+				model.addAttribute("appdbrumconfigpagename", "Items");
 
 				// Return the ThymeLeaf View
 				return "items";
@@ -319,8 +326,16 @@ public class ItemController {
 				logger.debug("item.name = " + item.getName());
 				logger.debug("item.price = " + item.getPrice());
 				
-				// Add the resulting list to our ThymeLeaf View
+				// Add the resulting item to our ThymeLeaf View
 				model.addAttribute("item", item);
+				
+				// Go and grab image - this implementation makes me cringe!
+				Path path = Paths.get(UPLOAD_FOLDER + item.getId() + "/" + item.getImage());
+				byte[] image = Files.readAllBytes(path);
+				byte[] encode = Base64.getEncoder().encode(image);
+				
+				// Inline the resulting image to our ThymeLeaf View
+				model.addAttribute("image", new String(encode, "UTF-8"));
 				
 				// AppD Browser EUM Configs
 				model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
@@ -328,6 +343,7 @@ public class ItemController {
 				model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
 				model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
 				model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+				model.addAttribute("appdbrumconfigpagename", "Item");
 
 				// Return the ThymeLeaf View
 				return "item";

@@ -1,5 +1,9 @@
 package com.ktully.appd.otel.ui.Controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,7 +21,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -35,6 +43,8 @@ import io.opentelemetry.trace.Tracer;
 public class PostController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+	
+	private static String UPLOAD_FOLDER = "/app/images/";
 
 	@Value("${item.api.url}")
 	private String itemApiUrl;
@@ -67,13 +77,17 @@ public class PostController {
 		model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
 		model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
 		model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+		model.addAttribute("appdbrumconfigpagename", "Post");
 		
 		return "post";
 	}
 
 	@PostMapping("/post")
-	public String postItem(@ModelAttribute Item item, Model model) {
+	public String postItem(@ModelAttribute Item item, Model model, RedirectAttributes redirectAttributes,
+			@RequestParam("file") MultipartFile file) {
 		item.setId(-1); // Send something except null
+		item.setImage(file.getOriginalFilename()); // grab the original file name
+		
 		// Start with RestTemplate, the add webClient, then add Otel
 
 		// Start a Parent Span for "/items"
@@ -97,7 +111,7 @@ public class PostController {
 
 			/*
 			 * *****************************************************************************
-			 * *** START *** RestTemplate for nostalgia ***
+			 * *** START *** RestTemplate ***
 			 */
 			RestTemplate restTemplate = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();
@@ -136,14 +150,25 @@ public class PostController {
 				
 				logger.debug("itemPostResponse.getBody() = " + itemPostResponse.getBody());
 				
-				model.addAttribute("itemId", itemPostResponse.getBody());
+				//model.addAttribute("itemId", itemPostResponse.getBody());
 				
-				// AppD Browser EUM Configs
-				model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
-				model.addAttribute("appdbrumconfigadrumurlhttp", appdbrumconfigadrumurlhttp);
-				model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
-				model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
-				model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+				// Send resulting itemId to the postResult redirect page
+				redirectAttributes.addAttribute("itemId", itemPostResponse.getBody());
+				
+				// Add code to persist image upload to local disk
+				
+		        try {
+		            // Get the file and save it somewhere
+		            byte[] bytes = file.getBytes();
+		            Path path = Paths.get(UPLOAD_FOLDER + itemPostResponse.getBody() + "/" + file.getOriginalFilename());
+		            logger.debug("@@@@@@@Writing file to (path.toString()): " + path.toString());
+		            Path parentDir = path.getParent();
+		            Files.createDirectories(parentDir);
+		            Files.write(path, bytes);
+
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
 
 				// Capture the result that could be passed to our ThymeLeaf view
 				// List<Item> listItems = itemResponse.getBody();
@@ -158,7 +183,7 @@ public class PostController {
 			}
 			/*
 			 * *****************************************************************************
-			 * *** END *** RestTemplate for nostalgia ***
+			 * *** END *** RestTemplate ***
 			 */
 		}
 		finally {
@@ -167,6 +192,22 @@ public class PostController {
 
 		// TODO - Add support for WebClient
 
+		return "redirect:/postResult";
+	}
+	
+	@RequestMapping("/postResult")
+	public String postResult(Model model, @RequestParam(name = "itemId") String itemId) {
+		
+		model.addAttribute("itemId", itemId);
+		
+		// AppD Browser EUM Configs
+		model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
+		model.addAttribute("appdbrumconfigadrumurlhttp", appdbrumconfigadrumurlhttp);
+		model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
+		model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
+		model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+		model.addAttribute("appdbrumconfigpagename", "Post Result");
+		
 		return "postResult";
 	}
 

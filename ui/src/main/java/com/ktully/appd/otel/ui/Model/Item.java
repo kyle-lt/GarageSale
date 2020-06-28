@@ -13,6 +13,8 @@ public class Item {
 	
 	private Float price;
 	
+	private String image;
+	
 	// Setters
 	public void setId(int id) {
 		this.id = id;
@@ -30,6 +32,10 @@ public class Item {
 		this.price = price;
 	}
 	
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
 	// Getters
 	public int getId() {
 		return this.id;
@@ -45,6 +51,10 @@ public class Item {
 	
 	public Float getPrice() {
 		return this.price;
+	}
+	
+	public String getImage() {
+		return this.image;
 	}
 	
 

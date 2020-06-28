@@ -9,7 +9,11 @@ RUN ./downloadJavaAgentLatest.sh
 RUN mkdir /app
 WORKDIR /app
 
+# Add jar
 ADD ./ui-0.0.1-SNAPSHOT.jar .
+
+# Copy seed image files
+COPY images /app/images
 
 ### OpenShift Considerations...
 ### Setup user for build execution and application runtime

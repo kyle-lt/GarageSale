@@ -40,7 +40,22 @@ tr:nth-child(even) {
 
 footer {
     clear: both;
-    position: relative;
+    position: bottom;
     height: 200px;
     margin-top: -200px;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.btn:hover {
+  background-color: #45a049;
 }

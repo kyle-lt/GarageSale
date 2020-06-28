@@ -3,8 +3,6 @@ package com.ktully.appd.otel.itemapi.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +14,6 @@ import io.opentelemetry.trace.Tracer;
 
 @Service
 public class ItemService {
-
-	private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
 
 	@Autowired
 	ItemRepository itemRepository;

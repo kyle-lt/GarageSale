@@ -10,6 +10,7 @@
         var adrumExtUrlHttps = /*[[${appdbrumconfigadrumurlhttps}]]*/ 'default';
         var beaconUrlHttp = /*[[${appdbrumconfigbeaconhttp}]]*/ 'default';
         var beaconUrlHttps = /*[[${appdbrumconfigbeaconhttps}]]*/ 'default';
+        var pageName = /*[[${appdbrumconfigpagename}]]*/ 'default';
       /*]]>*/
     </script>
 	<script type="text/javascript" src="/script/appd.js"></script>
@@ -23,11 +24,12 @@
     <div class="container">
       <div class="hero-unit">
 		<h1>Post Your Item!</h1>
-	    <form action="#" th:action="@{/post}" th:object="${item}" method="post">
-	    	<p>Category: <input type="text" th:field="*{category}" /></p>
-	        <p>Name: <input type="text" th:field="*{name}" /></p>
-	        <p>Price: <input type="text" th:field="*{price}" /></p>
-	        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+	    <form action="#" th:action="@{/post}" th:object="${item}" method="post" enctype="multipart/form-data">
+	    	<label>Category</br><input type="text" th:field="*{category}" /></label></br>
+	        <label>Name</br><input type="text" th:field="*{name}" /></label></br>
+	        <label>Price</br><input type="text" th:field="*{price}" /></label></br>
+            <label>Image</br><input type="file" name="file" /><br/><br/>
+	        <p><input type="submit" value="Submit" class="btn"/> <input type="reset" value="Reset" class="btn"/></p>
 	    </form>
       </div>
 	<div th:replace="fragments/footer :: footer"></div>

@@ -30,6 +30,7 @@ public class HomeController {
 		model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
 		model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
 		model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+		model.addAttribute("appdbrumconfigpagename", "Home Page");
         
 		return "home";
     }
@@ -45,6 +46,7 @@ public class HomeController {
 		model.addAttribute("appdbrumconfigadrumurlhttps", appdbrumconfigadrumurlhttps);
 		model.addAttribute("appdbrumconfigbeaconhttp", appdbrumconfigbeaconhttp);
 		model.addAttribute("appdbrumconfigbeaconhttps", appdbrumconfigbeaconhttps);
+		model.addAttribute("appdbrumconfigpagename", "Home Page");
 		
 		return "home";
 	}

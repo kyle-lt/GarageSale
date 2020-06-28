@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
       lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head th:insert="fragments/headFiles :: headFiles">
+<head>
     <title>Post Result</title>
     <script th:inline="javascript">
       /*<![CDATA[*/
@@ -10,6 +10,7 @@
         var adrumExtUrlHttps = /*[[${appdbrumconfigadrumurlhttps}]]*/ 'default';
         var beaconUrlHttp = /*[[${appdbrumconfigbeaconhttp}]]*/ 'default';
         var beaconUrlHttps = /*[[${appdbrumconfigbeaconhttps}]]*/ 'default';
+        var pageName = /*[[${appdbrumconfigpagename}]]*/ 'default';
       /*]]>*/
     </script>
 	<script type="text/javascript" src="/script/appd.js"></script>

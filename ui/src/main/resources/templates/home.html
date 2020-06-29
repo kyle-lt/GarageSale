@@ -24,8 +24,34 @@
     <nav th:replace="fragments/header :: header"></nav>
     <div class="container">
       <div class="hero-unit">
-        <h1>Welcome to the Garage Sale!</h1>
+        <h1>Welcome to the Garage Sale!</h1></br>
         <h2>Open the AppD & Jaeger UIs</h2>
+        <p id="UIs">
+          First, open up the APM & Tracing UIs.
+        </p>
+        <p>
+          <a id="appd" href="/items" class="btn btn-large btn-success">AppD Controller</a>
+        </p>
+        <p>
+          <a id="jaeger" href="/items" class="btn btn-large btn-success">Jaeger</a>
+        </p>
+          <script th:inline="javascript">
+            /*<![CDATA[*/
+            var ssl  = /*[[${@environment.getProperty('appdSsl')}]]*/ 'default';
+            var host = /*[[${@environment.getProperty('appdHost')}]]*/ 'default';
+            var port = /*[[${@environment.getProperty('appdPort')}]]*/ 'default';
+            var dockerHost = /*[[${@environment.getProperty('dockerHostname')}]]*/ 'default';
+            var appdLink = document.getElementById("appd");
+            var jaegerLink = document.getElementById("jaeger");
+			if (ssl == 'false') {
+				appdLink.setAttribute("href", "http://" + host + ":" + port);
+			} else {
+				appdLink.setAttribute("href", "https://" + host + ":" + port);
+			}
+            jaegerLink.setAttribute("href", "http://" + dockerHost + ":16686");
+
+            /*]]>*/
+          </script>
 		<h2>Browse Items</h2>
         <p>
           Get started by checking out the items for sale.

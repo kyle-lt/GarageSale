@@ -1,5 +1,6 @@
 package com.ktully.appd.otel.ui.Controller;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
@@ -329,14 +331,6 @@ public class ItemController {
 				// Add the resulting item to our ThymeLeaf View
 				model.addAttribute("item", item);
 				
-				// Go and grab image - this implementation makes me cringe!
-				Path path = Paths.get(UPLOAD_FOLDER + item.getId() + "/" + item.getImage());
-				byte[] image = Files.readAllBytes(path);
-				byte[] encode = Base64.getEncoder().encode(image);
-				
-				// Inline the resulting image to our ThymeLeaf View
-				model.addAttribute("image", new String(encode, "UTF-8"));
-				
 				// AppD Browser EUM Configs
 				model.addAttribute("appdbrumconfigappkey", appdbrumconfigappkey);
 				model.addAttribute("appdbrumconfigadrumurlhttp", appdbrumconfigadrumurlhttp);
@@ -364,6 +358,16 @@ public class ItemController {
 			parentSpan.end();
 		}
 
+	}
+	
+	@RequestMapping("item/{id}/{image}")
+	public @ResponseBody byte[] getImage(@PathVariable("id") String id, @PathVariable("image") String image) throws IOException {
+		
+		Path path = Paths.get(UPLOAD_FOLDER + id + "/" + image);
+		byte[] imageBytes = Files.readAllBytes(path);
+		
+		return imageBytes;
+		
 	}
 
 }

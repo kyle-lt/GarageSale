@@ -18,7 +18,7 @@ In order to run this project, you'll need:
 1. Clone this repository to your local machine.
 2. Configure the `.env` file in the root project directory.
 
-   > __IMPORTANT:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
+   > __IMPORTANT:__ Detailed information regarding `.env` file can be found [below](#env-file).  This __MUST__ be done for this project to work!
 3. Use Docker Compose to start
 ```bash
 $ docker-compose up -d

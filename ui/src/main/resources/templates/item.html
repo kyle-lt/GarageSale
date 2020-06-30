@@ -23,7 +23,7 @@
 	<nav th:replace="fragments/header :: header" />
 	<div class="container">
       <div class="hero-unit">
-        <h1>Item</h1>
+        <h1 th:text="${item.name}"></h1>
 		<img th:src="@{/item/{id}/{image}(id = ${item.id}, image = ${item.image})}" alt="" />
 		<table style="width:100%">
 		    <thead>

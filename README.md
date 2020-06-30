@@ -126,11 +126,11 @@ This file contains all of the environment variables that need to be populated in
 
 ```bash
 # AppD Java Agent
-APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=78df80d5-f501-4f94-bafd-d04c78b057be
-APPDYNAMICS_AGENT_ACCOUNT_NAME=customer1
-APPDYNAMICS_CONTROLLER_HOST_NAME=192.168.86.40
-APPDYNAMICS_CONTROLLER_PORT=8090
-APPDYNAMICS_CONTROLLER_SSL_ENABLED=false
+APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=<Access_Key>
+APPDYNAMICS_AGENT_ACCOUNT_NAME=<Account_Name>
+APPDYNAMICS_CONTROLLER_HOST_NAME=<Controller_Host>
+APPDYNAMICS_CONTROLLER_PORT=<Controller_Port>
+APPDYNAMICS_CONTROLLER_SSL_ENABLED=<true_or_false>
 ```
 > __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Java Agent Configuration Documentation](https://docs.appdynamics.com/display/PRO45/Java+Agent+Configuration+Properties)
 

@@ -1,2 +1,2 @@
 *.jar
-.myenv
+.env_private

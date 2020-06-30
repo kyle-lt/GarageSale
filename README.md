@@ -11,6 +11,7 @@ It's not necessary to build this project.  All images can be pulled from Docker 
 In order to run this project, you'll need:
 - Docker
 - Docker Compose
+
    > __Note:__  The Docker versions must support Docker Compose File version 3.2+
 
 ### Steps to Run
@@ -23,6 +24,7 @@ In order to run this project, you'll need:
 $ docker-compose up -d
 ```
 4. Access front-end UI on `http://$DOCKER_HOSTNAME:8080`.
+
    > __Note:__  Default configuration assumes localhost/127.0.0.1, so navigate to `http://127.0.0.1:8080`.
 
 ## Build

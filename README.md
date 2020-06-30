@@ -1,10 +1,10 @@
 # GarageSale
 ## Overview
-This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM agent (AppDynamics).
+This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM Platform (AppDynamics).
 
-There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to not be performant, and so from the angle of tracing and monitoring, it's all good.
+There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to **not** be performant, and so from the angle of tracing and monitoring, it's all good.
 
-It's not necessary to build this project.  All images can be pulled from Docker Hub for you when you run with `docker-compose up -d`.
+It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with `docker-compose up -d`.
 
 ## Quick Start
 ### Prerequisites
@@ -13,7 +13,6 @@ In order to run this project, you'll need:
 - Docker Compose
 > __Note:__  The Docker versions must support Docker Compose File version 3.2+
 
-
 ### Steps to Run
 1. Clone this repository to your local machine.
 2. Configure the `.env` file in the root project directory.
@@ -21,7 +20,7 @@ In order to run this project, you'll need:
 ```bash
 $ docker-compose up -d
 ```
- 
+
 ## Build
 __Note:__ the build process requires internet access.
 ### Prerequisites
@@ -31,9 +30,9 @@ If you'd like to build the project locally, you'll need:
 - Docker
 - Docker Compose
 
-### Steps
+### Steps to Build
 1. Clone this repository to your local machine.
-2. For each `ui` and `item-api`, run build script to build runnable jars
+2. For each `ui` and `item-api`, run build script.
 ```bash
 # Move into app directory
 $ cd ui
@@ -41,7 +40,7 @@ $ cd ui
 $ ./buildForDocker.sh
 ```
 3. Configure the `.env` file in the root project directory.
-   > __Note:__ Detailed information regarding `.env` file can be found [below](###-.env-File).
+   > __Note:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
 4. Use Docker Compose to build local images
 ```bash
 $ docker-compose build
@@ -50,7 +49,6 @@ $ docker-compose build
 ```bash
 $ docker-compose up -d
 ```
-
 
 ## More Notes on Configuration
 ### Project File Structure
@@ -85,7 +83,10 @@ $ GarageSale
     │   └── test
 ```
 ### Application Code
-The app code is housed in `ui` and `item-api` directories.  Each directory contains source code and a `docker` directory containing a `Dockerfile` and a script (`downloadJavaAgentLatest.sh`) to download the latest AppDynamics Java Agent.
+The app code is housed in `ui` and `item-api` directories.  Each directory contains source code and a `docker` directory.  The `docker` directory contains:
+- `Dockerfile`
+- `downloadJavaAgentLatest.sh`
+   - A script to download the latest AppDynamics Java Agent.
 
 ### docker-compose.yml
 This file is located in the project root and manages building and running the Docker containers. It uses the `.env` file to populate environment variables for the project to work properly.
@@ -117,7 +118,7 @@ APPDYNAMICS_BROWSER_EUM_BEACON_HTTPS=https://col.eum-appdynamics.com
 
 ## Development/Testing
 This repo contains some artifacts to ease re-builds for testing.
-- runWithBuild.sh
+- `runWithBuild.sh`
    - This script builds a runnable jar and runs it locally (no container)
-- imageBuildAndRunTailLog.sh
+- `imageBuildAndRunTailLog.sh`
    - This script builds a runnable jar, builds the app image, creates (or re-creates) the container, and tails the container logs - very useful for debugging a recent code change

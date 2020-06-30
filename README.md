@@ -48,9 +48,12 @@ $ ./buildForDocker.sh
 3. Configure the `.env` file in the root project directory.
 
    > __IMPORTANT:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
-4. Use Docker Compose to build local images
+4. Uncomment the build directives for the `ui` and `item-api` services in `docker-compose.yml`.
 ```bash
-$ docker-compose build
+build: ./ui/docker
+...
+build: ./item-api/docker
+
 ```
 5. Use Docker Compose to start
 ```bash

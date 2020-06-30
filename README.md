@@ -3,24 +3,51 @@
 This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM agent (AppDynamics).
 
 There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to not be performant, and so from the angle of tracing and monitoring, it's all good.
- 
-## Prerequisites
-In order to use this extension, you do need a [Standalone __JAVA__ Machine Agent](https://docs.appdynamics.com/display/PRO45/Standalone+Machine+Agents) or [__SIM__ Agent](https://docs.appdynamics.com/display/PRO45/Server+Visibility).  For more details on downloading these products, please  visit https://download.appdynamics.com/.
 
-In order to build this extension, you'll need:
+It's not necessary to build this project.  All images can be pulled from Docker Hub for you when you run with `docker-compose up -d`.
+
+## Quick Start
+### Prerequisites
+In order to run this project, you'll need:
+- Docker Compose (supporting Compose file version 3.2+)
+### Steps to Run
+1. Clone this repository to your local machine.
+2. Configure the `.env` file in the root project directory.
+3. Use Docker Compose to start
+```bash
+$ docker-compose up -d
+```
+ 
+## Build
+__Note:__ the build process requires internet access.
+### Prerequisites
+If you'd like to build the project locally, you'll need:
 - Java 1.8+
 - Maven 3.x
+- Docker Compose 18.06.0+
 
-## Installation
-1. Clone this repository to your local repository.
-2. To build, run `mvn clean install` and find the `Snmp-Trap-Receiver-Extension-1.0.zip` file in the `target` folder.
-3. Unzip and copy that directory to `<MACHINE_AGENT_HOME>/monitors`
+### Steps
+1. Clone this repository to your local machine.
+2. For each `ui` and `item-api`, run build script to build runnable jars
+```bash
+$ cd ui
+$ ./buildForDocker.sh
+```
+3. Configure the `.env` file in the root project directory.
+4. Use Docker Compose to build local images
+```bash
+$ docker-compose build
+```
+5. Use Docker Compose to start
+```bash
+$ docker-compose up -d
+```
 
-Please place the extension in the "__monitors__" directory of your __Machine Agent__ installation directory. Do not place the extension in the "__extensions__" directory of your __Machine Agent__ installation directory.
 
-## Configuration
-### config.yml
-Configure the extension by editing the `config.yml` file in `<MACHINE_AGENT_HOME>/monitors/SnmpTrapReceiver/`
+## More Notes on Configuration (via .env file)
+### Project File Structure
+
+
 1. If not using SIM, or if metrics and events should correlate to an Application Tier, configure the "tier" under which the metrics need to be reported. This can be done by changing the value of `<COMPONENT_ID>` in
 
      `metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|SNMP Trap Receiver"`

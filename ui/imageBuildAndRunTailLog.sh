@@ -6,4 +6,8 @@ cd ..
 
 docker-compose build ui
 
+docker-compose up -d
+
+docker logs -f garagesale_ui_1
+
 exit 0

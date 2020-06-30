@@ -6,4 +6,8 @@ cd ..
 
 docker-compose build item-api
 
+docker-compose up -d
+
+docker logs -f garagesale_item-api_1
+
 exit 0

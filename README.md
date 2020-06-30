@@ -82,6 +82,7 @@ Accessible on `http://$DOCKER_HOSTNAME:16686`
 Abbreviated tree output (only relevant files & paths shown)
 ```bash
 $ GarageSale
+├── LICENSE.txt
 ├── README.md
 ├── docker-compose.yml
 ├── .env

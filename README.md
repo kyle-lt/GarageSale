@@ -22,9 +22,11 @@ In order to run this project, you'll need:
 ```bash
 $ docker-compose up -d
 ```
+4. Access front-end UI on `http://$DOCKER_HOSTNAME:8080`.
+   > __Note:__  Default configuration assumes localhost/127.0.0.1, so navigate to `http://127.0.0.1:8080`.
 
 ## Build
-__Note:__ the build process requires internet access.
+> __Note:__ the build process requires internet access.
 ### Prerequisites
 If you'd like to build the project locally, you'll need:
 - Java 1.8+
@@ -52,6 +54,28 @@ $ docker-compose build
 ```bash
 $ docker-compose up -d
 ```
+
+## Docker Compose Services
+### ui
+Front-End Spring Boot MVC using Thymeleaf.  
+
+By default, accessible on `http://$DOCKER_HOSTNAME:8080`.
+
+### item-api
+Spring Boot RestController using JPA with H2 database. 
+
+By default, accessible on `http://$DOCKER_HOSTNAME:8081`.
+
+### appd-machine
+AppDynamics Machine agent, pulled from [`appdynamics/machine-agent-analytics:latest`](https://hub.docker.com/r/appdynamics/machine-agent-analytics).
+
+### appd-netviz
+AppDynamics Machine agent with Network Visibility, pulled from [`appdynamics/machine-agent-netviz:latest`](https://hub.docker.com/r/appdynamics/machine-agent-netviz).
+
+### jaeger
+Jaeger all-in-one, pulled from [`jaegertracing/all-in-one:latest`](https://hub.docker.com/r/jaegertracing/all-in-one). 
+
+Accessible on `http://$DOCKER_HOSTNAME:16686`
 
 ## More Notes on Configuration
 ### Project File Structure

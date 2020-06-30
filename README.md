@@ -9,7 +9,11 @@ It's not necessary to build this project.  All images can be pulled from Docker 
 ## Quick Start
 ### Prerequisites
 In order to run this project, you'll need:
-- Docker Compose (supporting Compose file version 3.2+)
+- Docker
+- Docker Compose
+> __Note:__  The Docker versions must support Docker Compose File version 3.2+
+
+
 ### Steps to Run
 1. Clone this repository to your local machine.
 2. Configure the `.env` file in the root project directory.
@@ -24,16 +28,20 @@ __Note:__ the build process requires internet access.
 If you'd like to build the project locally, you'll need:
 - Java 1.8+
 - Maven 3.x
-- Docker Compose 18.06.0+
+- Docker
+- Docker Compose
 
 ### Steps
 1. Clone this repository to your local machine.
 2. For each `ui` and `item-api`, run build script to build runnable jars
 ```bash
+# Move into app directory
 $ cd ui
+# Run the maven build and place runnable jar in docker directory
 $ ./buildForDocker.sh
 ```
 3. Configure the `.env` file in the root project directory.
+   > __Note:__ Detailed information regarding `.env` file can be found [below](###-.env-File).
 4. Use Docker Compose to build local images
 ```bash
 $ docker-compose build
@@ -44,119 +52,72 @@ $ docker-compose up -d
 ```
 
 
-## More Notes on Configuration (via .env file)
+## More Notes on Configuration
 ### Project File Structure
+Abbreviated tree output (only relevant files & paths shown)
+```bash
+$ GarageSale
+├── README.md
+├── docker-compose.yml
+├── .env
+├── item-api
+│   ├── buildForDocker.sh
+│   ├── docker
+│   │   ├── Dockerfile
+│   │   ├── downloadJavaAgentLatest.sh
+│   ├── imageBuildAndRunTailLog.sh
+│   ├── pom.xml
+│   ├── runWithBuild.sh
+│   ├── src
+│   │   ├── main
+│   │   └── test
+└── ui
+    ├── buildForDocker.sh
+    ├── docker
+    │   ├── Dockerfile
+    │   ├── downloadJavaAgentLatest.sh
+    │   ├── images
+    ├── imageBuildAndRunTailLog.sh
+    ├── pom.xml
+    ├── runWithBuild.sh
+    ├── src
+    │   ├── main
+    │   └── test
+```
+### Application Code
+The app code is housed in `ui` and `item-api` directories.  Each directory contains source code and a `docker` directory containing a `Dockerfile` and a script (`downloadJavaAgentLatest.sh`) to download the latest AppDynamics Java Agent.
 
+### docker-compose.yml
+This file is located in the project root and manages building and running the Docker containers. It uses the `.env` file to populate environment variables for the project to work properly.
 
-1. If not using SIM, or if metrics and events should correlate to an Application Tier, configure the "tier" under which the metrics need to be reported. This can be done by changing the value of `<COMPONENT_ID>` in
+### .env File
+This file contains all of the environment variables that need to be populated in order for the project to run, and for the performance tools to operate.  Items that *must* be tailored to your environment are:
 
-     `metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|SNMP Trap Receiver"`
+```bash
+# AppD Java Agent
+APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=78df80d5-f501-4f94-bafd-d04c78b057be
+APPDYNAMICS_AGENT_ACCOUNT_NAME=customer1
+APPDYNAMICS_CONTROLLER_HOST_NAME=192.168.86.40
+APPDYNAMICS_CONTROLLER_PORT=8090
+APPDYNAMICS_CONTROLLER_SSL_ENABLED=false
+```
+> __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Java Agent Configuration Documentation](https://docs.appdynamics.com/display/PRO45/Java+Agent+Configuration+Properties)
 
-2. Configure the `machineAgentConnection` to the Machine Agent HTTP Listener.<br/>For example,
- 
-    ```
-      # Machine Agent HTTP Listener
-      # All of the values shoule be strings wrapped in double quotes - see defaults for examples
-      # host should remain as localhost, or perhaps loopback "127.0.0.1"
-      host: "localhost"
-      # port default matches Machine Agent default of "8293". If using different port for
-      # the machine agent, e.g., passing JVM arg -Dmetric.http.listener.port=8080, port
-      # value should be set as "8080"
-      port: "8293"
-    ```
- 3. Configure the `snmpConnection` information where applicable.<br/>For example,
-    ```
-      # SNMP Trap Receiver Connection
-      # All of the values shoule be strings wrapped in double quotes - see defaults for examples
-      snmpConnection:
-        # snmpProtocol can be "tcp" or "udp"
-        snmpProtocol: "udp"
-        snmpIP: "0.0.0.0"
-        # Port values less than 1024 require Machine Agent to run as root/sudo
-        snmpPort: "16200"
-        # The below configurations are for v3 only - if not using v3, leave as-is
-        snmpUsername: "username"
-        # Auth Protocol Options are "MD5" or "SHA"
-        snmpAuthProtocol: "MD5"
-        snmpAuthPassPhrase: "authpassphrase"
-        # Privacy/Encryption Protocol Options are "AES128", "AES192", "AES256", "DES", or "3DES"
-        snmpPrivacyProtocol: "AES128"
-        snmpPrivacyPassPhrase: "privacypassphrase"
-    ```
- 4. When starting the machine agent, pass the [HTTP Listener configurations](https://docs.appdynamics.com/display/PRO45/Standalone+Machine+Agent+HTTP+Listener)
- 
-Please copy all the contents of the config.yml file and go to http://www.yamllint.com/ . On reaching the website, paste the contents and press the “Go” button on the bottom left.
+```bash
+# AppD Browser EUM
+APPDYNAMICS_BROWSER_EUM_APPKEY=AA-AAA-AAA-AAA
+APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTP=http://cdn.appdynamics.com
+APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTPS=https://cdn.appdynamics.com
+APPDYNAMICS_BROWSER_EUM_BEACON_HTTP=http://col.eum-appdynamics.com
+APPDYNAMICS_BROWSER_EUM_BEACON_HTTPS=https://col.eum-appdynamics.com
+```
+> __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Real User Monitoring Documentation](https://docs.appdynamics.com/display/PRO45/Set+Up+and+Access+Browser+RUM)
 
-## Metrics
-By default, the extension assumes SIM, and uses the following default configuration:
-    
-    
-      # Use this format if using SIM (Server Visibility enabled) Machine Agent
-      metricPrefix: "Custom Metrics|SNMP Trap Receiver"
-    
-    
-Metrics will be reported under the following metric tree:
+**The rest of the environment variables can be left with default values.**
 
-`Application Infrastructure Performance|Root|Individual Nodes|<SIM_SERVER_NAME>|Custom Metrics|SNMP Trap Receiver`
-
-Alternatively, you can map metrics to a Tier within an application. If doing so, we strongly recommend using the tier specific metric prefix so that metrics are reported only to a specified tier. Please change the metric prefix in your `config.yaml`
-
-    
-      # Use this format if using plain Machine Agent
-      # This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> 
-      # with the appropriate one from your environment.
-      metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|SNMP Trap Receiver"
-    
-To find the <COMPONENT_ID> in your environment, please follow the instructions [here](https://docs.appdynamics.com/display/PRO45/Build+a+Monitoring+Extension+Using+Java)
-
-Metrics will now be seen under the following metric tree:
-
-`Application Infrastructure Performance|<COMPONENT_ID>|Custom Metrics|SNMP Trap Receiver`
-
-## Testing
-This repo contains some artifacts to ease setup for testing, and issuing test calls to confirm functionality.  In order to use these artifacts, you'll need:
-- Docker
-- Docker-Compose
-- Internet Connection (to pull a Docker image from Docker Hub)
-
-### containerDeploy.sh
-- Script to build and deploy a Docker container with a SIM machine agent and this extension with `DEBUG` logging enabled.
-- Edit `docker-compose.yml` to point to your AppD Controller of choice.
-
-### sendTestTraps.sh
-- Script to send test TRAPs and INFORMs for all SNMP versions to the extension running in the Docker container to verify functionality
-
-## Credentials Encryption
-Please visit [this page](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) to get detailed instructions on password encryption. The steps in this document will guide you through the whole process.
-
-## Extensions Workbench
-Workbench is an inbuilt feature provided with each extension in order to assist you to fine tune the extension setup before you actually deploy it on the controller. Please review the following document on [How to use the Extensions WorkBench](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-the-Extensions-WorkBench/ta-p/30130)
-
-## Troubleshooting
-Please follow the steps listed in this [troubleshooting-document](https://community.appdynamics.com/t5/Knowledge-Base/How-to-troubleshoot-missing-custom-metrics-or-extensions-metrics/ta-p/28695) in order to troubleshoot your issue. These are a set of common issues that customers might have faced during the installation of the extension. If these don't solve your issue, please follow the last step on the [troubleshooting-document](https://community.appdynamics.com/t5/Knowledge-Base/How-to-troubleshoot-missing-custom-metrics-or-extensions-metrics/ta-p/28695) to contact the support team.
-
-## Support Tickets
-If after going through the [Troubleshooting Document](https://community.appdynamics.com/t5/Knowledge-Base/How-to-troubleshoot-missing-custom-metrics-or-extensions-metrics/ta-p/28695) you have not been able to get your extension working, please file a ticket and add the following information.
-
-Please provide the following in order for us to assist you better.
-
-1. Stop the running machine agent.
-2. Delete all existing logs under `<MachineAgent>/logs`.
-3. Please enable debug logging by editing the file `<MachineAgent>/conf/logging/log4j.xml`. Change the level value of the following `<logger>` elements to `debug`.
-   </br>`<logger name="com.singularity">`
-   </br>`<logger name="com.appdynamics">`
-4. Start the machine agent and please let it run for 10 mins. Then zip and upload all the logs in the directory `<MachineAgent>/logs/*`.
-5. Attach the zipped `<MachineAgent>/conf/*` directory here.
-6. Attach the zipped `<MachineAgent>/monitors/ExtensionFolderYouAreHavingIssuesWith` directory here.
-For any support related questions, you can also contact [help@appdynamics.com](mailto:help@appdynamics.com).
-
-## Contributing
-Always feel free to fork and contribute any changes directly via [GitHub](https://github.com/Appdynamics/snmp-trap-receiver-extension).
-
-## Version
-Name |	Version
----|---
-Extension Version |	1.0.0
-Controller Compatibility | 4.5.x or Later
-Last Update |	06/09/2020
-
+## Development/Testing
+This repo contains some artifacts to ease re-builds for testing.
+- runWithBuild.sh
+   - This script builds a runnable jar and runs it locally (no container)
+- imageBuildAndRunTailLog.sh
+   - This script builds a runnable jar, builds the app image, creates (or re-creates) the container, and tails the container logs - very useful for debugging a recent code change

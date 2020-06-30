@@ -11,11 +11,13 @@ It's not necessary to build this project.  All images can be pulled from Docker 
 In order to run this project, you'll need:
 - Docker
 - Docker Compose
-> __Note:__  The Docker versions must support Docker Compose File version 3.2+
+   > __Note:__  The Docker versions must support Docker Compose File version 3.2+
 
 ### Steps to Run
 1. Clone this repository to your local machine.
 2. Configure the `.env` file in the root project directory.
+
+   > __IMPORTANT:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
 3. Use Docker Compose to start
 ```bash
 $ docker-compose up -d
@@ -40,7 +42,8 @@ $ cd ui
 $ ./buildForDocker.sh
 ```
 3. Configure the `.env` file in the root project directory.
-   > __Note:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
+
+   > __IMPORTANT:__ Detailed information regarding `.env` file can be found [below](###-.env-File).  This __MUST__ be done for this project to work!
 4. Use Docker Compose to build local images
 ```bash
 $ docker-compose build

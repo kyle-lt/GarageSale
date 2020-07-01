@@ -2,9 +2,11 @@
 ## Overview
 This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM Platform (AppDynamics).
 
-There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to **not** be performant, and so from the angle of tracing and monitoring, it's all good.
+There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to __not__ be performant, and so from the angle of tracing and monitoring, it's all good.
 
 It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with `docker-compose up -d`.
+
+Once up and running, assuming you are running on your local machine, access the Home Page at `http://localhost:8080`.
 
 ## Quick Start
 ### Prerequisites
@@ -127,6 +129,7 @@ This file is located in the project root and manages building and running the Do
 ### .env File
 This file contains all of the environment variables that need to be populated in order for the project to run, and for the performance tools to operate.  Items that *must* be tailored to your environment are:
 
+#### AppDynamics Controller Configuration
 ```bash
 # AppD Java Agent
 APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=<Access_Key>
@@ -137,6 +140,8 @@ APPDYNAMICS_CONTROLLER_SSL_ENABLED=<true_or_false>
 ```
 > __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Java Agent Configuration Documentation](https://docs.appdynamics.com/display/PRO45/Java+Agent+Configuration+Properties)
 
+#### AppDynamics Browser EUM Configuration
+> __Note:__  You must create a Browser Application in AppDynamics (E.g., GarageSale-Web), and then copy the App Key into the configuration property below.  The remaining default configurations below can be left alone if using __SaaS__, but need to be provided for __on-prem__ deployments of the AppD EUM Collector.
 ```bash
 # AppD Browser EUM
 APPDYNAMICS_BROWSER_EUM_APPKEY=AA-AAA-AAA-AAA
@@ -147,7 +152,7 @@ APPDYNAMICS_BROWSER_EUM_BEACON_HTTPS=https://col.eum-appdynamics.com
 ```
 > __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Real User Monitoring Documentation](https://docs.appdynamics.com/display/PRO45/Set+Up+and+Access+Browser+RUM)
 
-**The rest of the environment variables can be left with default values.**
+**The rest of the environment variables in the `.env` file can be left with default values.**
 
 ## Development/Testing
 This repo contains some artifacts to ease re-builds for testing.

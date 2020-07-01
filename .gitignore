@@ -1,2 +1,3 @@
 *.jar
 .env_private
+docker-compose.yml_private

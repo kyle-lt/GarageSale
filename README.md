@@ -8,6 +8,9 @@ It's not necessary to build this project.  All images can be pulled from Docker 
 
 Once up and running, assuming you are running on your local machine, access the Home Page at `http://localhost:8080`.
 
+![Home Page]
+(https://github.com/kyle-lt/GarageSale/blob/master/README_Images/GarageSale_Home_Page.png)
+
 ## Quick Start
 ### Prerequisites
 In order to run this project, you'll need:

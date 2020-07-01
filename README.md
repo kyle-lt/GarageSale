@@ -81,6 +81,8 @@ AppDynamics Machine agent, pulled from [`appdynamics/machine-agent-analytics:lat
 ### appd-netviz
 AppDynamics Machine agent with Network Visibility, pulled from [`appdynamics/machine-agent-netviz:latest`](https://hub.docker.com/r/appdynamics/machine-agent-netviz).
 
+> __Note:__  If running on Kubernetes, the appd-machine and appd-netviz are handled for you using the [AppDynamics Cluster Agent](https://docs.appdynamics.com/display/PRO45/Monitoring+Kubernetes+with+the+Cluster+Agent)
+
 ### jaeger
 Jaeger all-in-one, pulled from [`jaegertracing/all-in-one:latest`](https://hub.docker.com/r/jaegertracing/all-in-one). 
 

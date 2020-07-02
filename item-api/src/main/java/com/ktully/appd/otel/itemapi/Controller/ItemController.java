@@ -91,8 +91,39 @@ public class ItemController {
 	}
 
 	@GetMapping("/item/{id}")
-	private ItemModel getItem(@PathVariable("id") int id) {
-		return itemService.getItemById(id);
+	private ItemModel getItem(@PathVariable("id") int id, @RequestHeader Map<String, String> headers) {
+		
+		Context extractedContext = null;
+		try {
+			logger.debug("Trying to extact Context Propagation Headers");
+			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), headers,
+					getter);
+		} catch (Exception e) {
+			logger.error("Exception caught while extracting Context Propagators", e);
+		}
+
+		Span serverSpan = null;
+		try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
+			// Automatically use the extracted SpanContext as parent.
+			logger.debug("Trying to build Span and then make DB call.");
+			serverSpan = tracer.spanBuilder("/item-api/item/{id}").setSpanKind(Span.Kind.SERVER).startSpan();
+			// Add the attributes defined in the Semantic Conventions
+			serverSpan.setAttribute("http.method", "GET");
+			serverSpan.setAttribute("http.scheme", "http");
+			serverSpan.setAttribute("http.host", "item-api:8081");
+			serverSpan.setAttribute("http.target", "/item/" + id);
+			
+			return itemService.getItemById(id);
+
+		} catch (Exception e) {
+			logger.error("Exception caught attempting to create Span", e);
+			return itemService.getItemById(id);
+		} finally {
+			if (serverSpan != null) {
+				serverSpan.end();
+			}
+		}
+		
 	}
 
 	@DeleteMapping("/item/{id}")

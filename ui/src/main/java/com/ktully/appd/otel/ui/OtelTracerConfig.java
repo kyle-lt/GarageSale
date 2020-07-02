@@ -10,7 +10,7 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.Samplers;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.config.TraceConfig;
-import io.opentelemetry.sdk.trace.export.SimpleSpansProcessor;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.trace.Tracer;
 
 @Configuration
@@ -34,10 +34,10 @@ public class OtelTracerConfig {
 				.setServiceName("garagesale-ui")
 				.setChannel(ManagedChannelBuilder.forAddress("jaeger", 14250).usePlaintext().build())
 				.build();
-		SpanProcessor jaegerProcessor = SimpleSpansProcessor.create(jaegerExporter);
-
+		SpanProcessor jaegerProcessor = SimpleSpanProcessor.newBuilder(jaegerExporter).build();
+		
 		// Log Exporter
-		SpanProcessor logProcessor = SimpleSpansProcessor.create(new LoggingSpanExporter());
+		SpanProcessor logProcessor = SimpleSpanProcessor.newBuilder(new LoggingSpanExporter()).build();
 		
 		OpenTelemetrySdk.getTracerProvider().addSpanProcessor(logProcessor);
 		OpenTelemetrySdk.getTracerProvider().addSpanProcessor(jaegerProcessor);

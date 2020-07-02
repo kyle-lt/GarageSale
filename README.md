@@ -4,7 +4,7 @@ This project was developed in order to get hands-on experience instrumenting a J
 
 There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to __not__ be performant, and so from the angle of tracing and monitoring, it's all good.
 
-It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with [Docker Compose](#quick-start) or with [Kubernetes](#-kubernetes).
+It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with [Docker Compose](#quick-start) or with [Kubernetes](#kubernetes).
 
 Once up and running, assuming you are running on your local machine, access the Home Page at `http://localhost:8080`.
 
@@ -59,7 +59,7 @@ build: ./ui/docker
 build: ./item-api/docker
 
 ```
-5. Use Docker Compose to start (or use Kubernetes
+5. Use Docker Compose to start (or use [Kubernetes](#kubernetes))
 ```bash
 $ docker-compose up -d
 ```

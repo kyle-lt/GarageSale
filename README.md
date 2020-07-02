@@ -4,13 +4,13 @@ This project was developed in order to get hands-on experience instrumenting a J
 
 There is no guarantee that this application is built to any best practices or standards, and in certain cases is explicitly designed to __not__ be performant, and so from the angle of tracing and monitoring, it's all good.
 
-It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with `docker-compose up -d`.
+It's not necessary to build this project.  All images can be pulled from Docker Hub when you run with [Docker Compose](#quick-start) or with [Kubernetes](#-kubernetes).
 
 Once up and running, assuming you are running on your local machine, access the Home Page at `http://localhost:8080`.
 
 ![Home Page](/README_Images/GarageSale_Home_Page.png)
 
-## Quick Start
+## Quick Start with Docker Compose
 ### Prerequisites
 In order to run this project, you'll need:
 - Docker
@@ -59,7 +59,7 @@ build: ./ui/docker
 build: ./item-api/docker
 
 ```
-5. Use Docker Compose to start
+5. Use Docker Compose to start (or use Kubernetes
 ```bash
 $ docker-compose up -d
 ```
@@ -108,6 +108,10 @@ $ GarageSale
 │   ├── src
 │   │   ├── main
 │   │   └── test
+├── kubernetes
+│   ├── item-api-deployment.yaml
+│   ├── jaeger-list.yaml
+│   ├── ui-deployment.yaml
 └── ui
     ├── buildForDocker.sh
     ├── docker
@@ -157,6 +161,15 @@ APPDYNAMICS_BROWSER_EUM_BEACON_HTTPS=https://col.eum-appdynamics.com
 > __Tip:__  Documentation on these configuration properties can be found in the [AppDynamics Real User Monitoring Documentation](https://docs.appdynamics.com/display/PRO45/Set+Up+and+Access+Browser+RUM)
 
 **The rest of the environment variables in the `.env` file can be left with default values.**
+
+## Kubernetes
+This repo contains a few Kubernetes specs to deploy the app components and Jaeger as Kubernetes resources. They are located in the [kubernetes](/kubernetes) directory.
+- `ui-deployment.yaml`
+  - This spec contains a single-replica Deployment and Service (using NodePort by default) for the GarageSale UI.
+- `item-api-deployment.yaml`
+  - This spec contains a single-replica Deployment and Service (using NodePort by default) for the GarageSale Item API.
+- `jaeger-list.yaml`
+  - This spec is a list containing a single-replica Deployment and a few Services (using NodePort and ClusterIP) for the Jaeger all-in-one components.
 
 ## Development/Testing
 This repo contains some artifacts to ease re-builds for testing.

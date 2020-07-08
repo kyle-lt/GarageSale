@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,7 +35,6 @@ import io.opentelemetry.context.propagation.HttpTextFormat;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @Controller
 public class ItemController {
@@ -66,6 +64,32 @@ public class ItemController {
 
 	@Autowired
 	Tracer tracer;
+	
+	/*
+	 * Configuration for Context Propagation to be done via HttpHeaders injection
+	 */
+	HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
+		@Override
+		public void set(HttpHeaders carrier, String key, String value) {
+			logger.debug("RestTemplate - Adding Header with Key = " + key);
+			logger.debug("RestTemplate - Adding Header with Value = " + value);
+			carrier.add(key, value);
+		}
+	};
+	
+	/*
+	 * Configuration for Context Propagation to be done via injection into WebClient
+	 * Builder headers
+	 */
+	HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
+		@Override
+		public void set(Builder carrier, String key, String value) {
+			logger.debug("WebClient - Adding Header with Key = " + key);
+			logger.debug("WebClient - Adding Header with Value = " + value);
+			carrier.defaultHeader(key, value);
+
+		}
+	};
 
 	@RequestMapping("/items")
 	public String items(Model model) {
@@ -76,18 +100,6 @@ public class ItemController {
 
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
-
-			/*
-			 * Configuration for Context Propagation to be done via HttpHeaders injection
-			 */
-			HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
-				@Override
-				public void set(HttpHeaders carrier, String key, String value) {
-					logger.debug("RestTemplate - Adding Header with Key = " + key);
-					logger.debug("RestTemplate - Adding Header with Value = " + value);
-					carrier.add(key, value);
-				}
-			};
 
 			/*
 			 * *****************************************************************************
@@ -103,7 +115,11 @@ public class ItemController {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger
-				restTemplateSpan.setAttribute("items-RT-Key", "items-RT-Value");
+				// Add the attributes defined in the Semantic Conventions
+				restTemplateSpan.setAttribute("http.method", "GET");
+				restTemplateSpan.setAttribute("http.scheme", "http");
+				restTemplateSpan.setAttribute("http.host", "items:8080");
+				restTemplateSpan.setAttribute("http.target", "/items");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
@@ -133,19 +149,7 @@ public class ItemController {
 			 * *** END *** RestTemplate for nostalgia ***
 			 */
 
-			/*
-			 * Configuration for Context Propagation to be done via injection into WebClient
-			 * Builder headers
-			 */
-			HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
-				@Override
-				public void set(Builder carrier, String key, String value) {
-					logger.debug("WebClient - Adding Header with Key = " + key);
-					logger.debug("WebClient - Adding Header with Value = " + value);
-					carrier.defaultHeader(key, value);
 
-				}
-			};
 			/*
 			 * *****************************************************************************
 			 * *** START **** WebClient for future-proofing ***
@@ -159,7 +163,11 @@ public class ItemController {
 			try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 				// Add some important info to our Span
 				webClientSpan.addEvent("Calling item-api via WebClient"); // This ends up in "logs" section in Jaeger
-				webClientSpan.setAttribute("items-WC-Key", "items-WC-Value");
+				// Add the attributes defined in the Semantic Conventions
+				webClientSpan.setAttribute("http.method", "GET");
+				webClientSpan.setAttribute("http.scheme", "http");
+				webClientSpan.setAttribute("http.host", "items:8080");
+				webClientSpan.setAttribute("http.target", "/items");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
@@ -218,18 +226,6 @@ public class ItemController {
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
 
 			/*
-			 * Configuration for Context Propagation to be done via HttpHeaders injection
-			 */
-			HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
-				@Override
-				public void set(HttpHeaders carrier, String key, String value) {
-					logger.debug("RestTemplate - Adding Header with Key = " + key);
-					logger.debug("RestTemplate - Adding Header with Value = " + value);
-					carrier.add(key, value);
-				}
-			};
-
-			/*
 			 * *****************************************************************************
 			 * *** START *** RestTemplate for nostalgia ***
 			 */
@@ -243,7 +239,11 @@ public class ItemController {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger
-				restTemplateSpan.setAttribute("item-RT-Key", "item-RT-Value");
+				// Add the attributes defined in the Semantic Conventions
+				restTemplateSpan.setAttribute("http.method", "GET");
+				restTemplateSpan.setAttribute("http.scheme", "http");
+				restTemplateSpan.setAttribute("http.host", "item:8080");
+				restTemplateSpan.setAttribute("http.target", "/item/{id}");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
@@ -283,19 +283,6 @@ public class ItemController {
 			 */
 
 			/*
-			 * Configuration for Context Propagation to be done via injection into WebClient
-			 * Builder headers
-			 */
-			HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
-				@Override
-				public void set(Builder carrier, String key, String value) {
-					logger.debug("WebClient - Adding Header with Key = " + key);
-					logger.debug("WebClient - Adding Header with Value = " + value);
-					carrier.defaultHeader(key, value);
-
-				}
-			};
-			/*
 			 * *****************************************************************************
 			 * *** START **** WebClient for future-proofing ***
 			 */
@@ -308,7 +295,11 @@ public class ItemController {
 			try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 				// Add some important info to our Span
 				webClientSpan.addEvent("Calling item-api via WebClient"); // This ends up in "logs" section in Jaeger
-				webClientSpan.setAttribute("item-WC-Key", "item-WC-Value");
+				// Add the attributes defined in the Semantic Conventions
+				webClientSpan.setAttribute("http.method", "GET");
+				webClientSpan.setAttribute("http.scheme", "http");
+				webClientSpan.setAttribute("http.host", "item:8080");
+				webClientSpan.setAttribute("http.target", "/item/{id}");
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)

@@ -31,7 +31,7 @@ import com.ktully.appd.otel.ui.Model.Item;
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 import reactor.core.publisher.Flux;
@@ -68,7 +68,7 @@ public class ItemController {
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
+	TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -81,7 +81,7 @@ public class ItemController {
 	 * Configuration for Context Propagation to be done via injection into WebClient
 	 * Builder headers
 	 */
-	HttpTextFormat.Setter<Builder> webClientSetter = new HttpTextFormat.Setter<Builder>() {
+	TextMapPropagator.Setter<Builder> webClientSetter = new TextMapPropagator.Setter<Builder>() {
 		@Override
 		public void set(Builder carrier, String key, String value) {
 			logger.debug("WebClient - Adding Header with Key = " + key);
@@ -123,7 +123,7 @@ public class ItemController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), headers,
+				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 						httpHeadersSetter);
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
@@ -171,7 +171,7 @@ public class ItemController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), webClientBuilder,
+				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder,
 						webClientSetter);
 
 				// Make outgoing call via RestTemplate
@@ -247,7 +247,7 @@ public class ItemController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), headers,
+				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 						httpHeadersSetter);
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
@@ -303,7 +303,7 @@ public class ItemController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), webClientBuilder,
+				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder,
 						webClientSetter);
 
 				// Make outgoing call via RestTemplate

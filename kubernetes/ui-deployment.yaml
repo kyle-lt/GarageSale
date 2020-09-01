@@ -28,15 +28,15 @@ spec:
         - name: ITEM_API_PORT
           value: '8081'
         - name: APPDYNAMICS_CONTROLLER_HOST_NAME
-          value: '$APPDYNAMICS_CONTROLLER_HOST_NAME'
+          value: '192.168.86.40'
         - name: APPDYNAMICS_CONTROLLER_PORT
-          value: '$APPDYNAMICS_CONTROLLER_PORT'
+          value: '8090'
         - name: APPDYNAMICS_CONTROLLER_SSL_ENABLED
-          value: '$APPDYNAMICS_CONTROLLER_SSL_ENABLED'
+          value: 'false'
         - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-          value: '$APPDYNAMICS_AGENT_ACCOUNT_NAME'
+          value: 'customer1'
         - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: '$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY'
+          value: '78df80d5-f501-4f94-bafd-d04c78b057be'
         - name: APPDYNAMICS_AGENT_APPLICATION_NAME
           value: GarageSale-K8s
         - name: APPDYNAMICS_AGENT_TIER_NAME
@@ -46,7 +46,7 @@ spec:
         - name: APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX
           value: 'ui'
         - name: APPDYNAMICS_BROWSER_EUM_APPKEY
-          value: '$APPDYNAMICS_BROWSER_EUM_APPKEY'
+          value: 'AD-AAB-AAX-JUF'
         - name: APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTP
           value: 'http://cdn.appdynamics.com'
         - name: APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTPS

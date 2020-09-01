@@ -1,46 +1,60 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: item-api
+  name: ui
   labels:
-    app: item-api
+    app: ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: item-api
+      app: ui
   template:
     metadata:
       labels:
-        app: item-api
+        app: ui
     spec:
       containers:
       - name: ui
-        image: kjtully/garagesale-item-api:20.6
+        image: kjtully/garagesale-ui:20.6
         imagePullPolicy: Always
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
         env:
         - name: SERVER_PORT
+          value: '8080'
+        - name: ITEM_API_URL
+          value: 'item-api'
+        - name: ITEM_API_PORT
           value: '8081'
         - name: APPDYNAMICS_CONTROLLER_HOST_NAME
-          value: '192.168.86.40'
+          value: '$APPDYNAMICS_CONTROLLER_HOST_NAME'
         - name: APPDYNAMICS_CONTROLLER_PORT
-          value: '8090'
+          value: '$APPDYNAMICS_CONTROLLER_PORT'
         - name: APPDYNAMICS_CONTROLLER_SSL_ENABLED
-          value: 'false'
+          value: '$APPDYNAMICS_CONTROLLER_SSL_ENABLED'
         - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-          value: 'customer1'
+          value: '$APPDYNAMICS_AGENT_ACCOUNT_NAME'
         - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: '78df80d5-f501-4f94-bafd-d04c78b057be'
+          value: '$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY'
         - name: APPDYNAMICS_AGENT_APPLICATION_NAME
           value: GarageSale-K8s
         - name: APPDYNAMICS_AGENT_TIER_NAME
-          value: item-api
+          value: ui
         - name: APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME
           value: 'true'
         - name: APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX
-          value: 'item-api'
+          value: 'ui'
+        - name: APPDYNAMICS_BROWSER_EUM_APPKEY
+          value: '$APPDYNAMICS_BROWSER_EUM_APPKEY'
+        - name: APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTP
+          value: 'http://cdn.appdynamics.com'
+        - name: APPDYNAMICS_BROWSER_EUM_ADRUM_EXT_URL_HTTPS
+          value: 'https://cdn.appdynamics.com'
+        - name: APPDYNAMICS_BROWSER_EUM_BEACON_HTTP
+          value: 'http://col.eum-appdynamics.com'
+        - name: APPDYNAMICS_BROWSER_EUM_BEACON_HTTPS
+          value: 'https://col.eum-appdynamics.com'
         - name: APPDYNAMICS_NETVIZ_AGENT_HOST
           valueFrom:
             fieldRef:
@@ -58,14 +72,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: item-api
+  name: ui
   labels:
-    app: item-api
+    app: ui
 spec:
   ports:
-  - port: 8081
-    targetPort: 8081
+  - port: 8080
+    targetPort: 8080
     protocol: TCP
   selector:
-    app: item-api
+    app: ui
   type: NodePort

@@ -24,15 +24,15 @@ spec:
         - name: SERVER_PORT
           value: '8081'
         - name: APPDYNAMICS_CONTROLLER_HOST_NAME
-          value: '192.168.86.40'
+          value: '$APPDYNAMICS_CONTROLLER_HOST_NAME'
         - name: APPDYNAMICS_CONTROLLER_PORT
-          value: '8090'
+          value: '$APPDYNAMICS_CONTROLLER_PORT'
         - name: APPDYNAMICS_CONTROLLER_SSL_ENABLED
-          value: 'false'
+          value: '$APPDYNAMICS_CONTROLLER_SSL_ENABLED'
         - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-          value: 'customer1'
+          value: '$APPDYNAMICS_AGENT_ACCOUNT_NAME'
         - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: '78df80d5-f501-4f94-bafd-d04c78b057be'
+          value: '$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY'
         - name: APPDYNAMICS_AGENT_APPLICATION_NAME
           value: GarageSale-K8s
         - name: APPDYNAMICS_AGENT_TIER_NAME

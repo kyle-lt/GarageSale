@@ -35,7 +35,7 @@ import com.ktully.appd.otel.ui.Model.Item;
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 
@@ -100,7 +100,7 @@ public class PostController {
 			/*
 			 * Configuration for Context Propagation to be done via HttpHeaders injection
 			 */
-			HttpTextFormat.Setter<HttpHeaders> httpHeadersSetter = new HttpTextFormat.Setter<HttpHeaders>() {
+			TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
 				@Override
 				public void set(HttpHeaders carrier, String key, String value) {
 					logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -127,7 +127,7 @@ public class PostController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), headers,
+				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 						httpHeadersSetter);
 				
 				// Add Content-Type Header

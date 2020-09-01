@@ -2,8 +2,8 @@ version: "3.2"
 
 services:
   ui:
-    build: ./ui/docker
-    image: kjtully/garagesale-ui:20.8
+    #build: ./ui/docker
+    image: kjtully/garagesale-ui:20.6
     labels:
       desciption: "GarageSale UI"
     environment:
@@ -43,8 +43,8 @@ services:
           memory: 256M
 
   item-api:
-    build: ./item-api/docker
-    image: kjtully/garagesale-item-api:20.8
+    #build: ./item-api/docker
+    image: kjtully/garagesale-item-api:20.6
     labels:
       desciption: "GarageSale Item API"
     environment:

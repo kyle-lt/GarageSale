@@ -21,7 +21,7 @@ import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.context.ContextUtils;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.trace.Tracer;
 import io.opentelemetry.trace.Span;
 
@@ -40,7 +40,7 @@ public class ItemController {
 	 * Configuration for Context Propagation to be done via @RequestHeader
 	 * extraction
 	 */
-	HttpTextFormat.Getter<Map<String, String>> getter = new HttpTextFormat.Getter<Map<String, String>>() {
+	TextMapPropagator.Getter<Map<String, String>> getter = new TextMapPropagator.Getter<Map<String, String>>() {
 		@Override
 		public String get(Map<String, String> carrier, String key) {
 			logger.debug("Key = " + key);
@@ -57,7 +57,7 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), headers,
+			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
 					getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
@@ -96,7 +96,7 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), headers,
+			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
 					getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
@@ -137,7 +137,7 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), headers,
+			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
 					getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);

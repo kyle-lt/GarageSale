@@ -18,7 +18,7 @@ import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.context.ContextUtils;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 
@@ -43,7 +43,7 @@ public class TraceInterceptor implements HandlerInterceptor {
 		 * Configuration for Context Propagation to be done via HttpServletRequest
 		 * extraction
 		 */
-		HttpTextFormat.Getter<HttpServletRequest> getter = new HttpTextFormat.Getter<HttpServletRequest>() {
+		TextMapPropagator.Getter<HttpServletRequest> getter = new TextMapPropagator.Getter<HttpServletRequest>() {
 			@Override
 			public String get(HttpServletRequest carrier, String key) {
 				logger.debug("Key = " + key);
@@ -57,7 +57,7 @@ public class TraceInterceptor implements HandlerInterceptor {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			extractedContext = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), request,
+			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), request,
 					getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators, using Context.current()", e);
@@ -95,7 +95,7 @@ public class TraceInterceptor implements HandlerInterceptor {
 		 * Configuration for Context Propagation to be done via HttpServletRequest
 		 * extraction
 		 */
-		HttpTextFormat.Setter<HttpServletResponse> setter = new HttpTextFormat.Setter<HttpServletResponse>() {
+		TextMapPropagator.Setter<HttpServletResponse> setter = new TextMapPropagator.Setter<HttpServletResponse>() {
 			@Override
 			public void set(HttpServletResponse carrier, String key, String value) {
 				logger.debug("Key = " + key);
@@ -109,7 +109,7 @@ public class TraceInterceptor implements HandlerInterceptor {
     	
 		// Execute the header injection that we defined above in the Setter and
 		// create HttpEntity to hold the headers (and pass to RestTemplate)
-		OpenTelemetry.getPropagators().getHttpTextFormat().inject(Context.current(), response, setter);
+		OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), response, setter);
 		
 		currentSpan.end();
 		logger.debug("Trace postHandle called.");

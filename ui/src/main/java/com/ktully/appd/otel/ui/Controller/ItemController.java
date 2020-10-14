@@ -87,7 +87,6 @@ public class ItemController {
 			logger.debug("WebClient - Adding Header with Key = " + key);
 			logger.debug("WebClient - Adding Header with Value = " + value);
 			carrier.defaultHeader(key, value);
-
 		}
 	};
 
@@ -125,6 +124,7 @@ public class ItemController {
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
 				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 						httpHeadersSetter);
+				
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 

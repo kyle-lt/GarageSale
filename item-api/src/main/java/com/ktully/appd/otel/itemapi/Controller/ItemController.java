@@ -54,11 +54,18 @@ public class ItemController {
 	// private List<ItemModel> getAllItems() {
 	private List<ItemModel> getAllItems(@RequestHeader Map<String, String> headers) {
 		
+		// debug
+		//headers.forEach((k,v) -> logger.debug("Key = " + k + ", Value = " = v));
+		for (Map.Entry<String,String> entry : headers.entrySet())  
+            System.out.println("Key = " + entry.getKey() + 
+                             ", Value = " + entry.getValue());
+		
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
 			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
 					getter);
+			logger.debug(extractedContext.toString());
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
 		}

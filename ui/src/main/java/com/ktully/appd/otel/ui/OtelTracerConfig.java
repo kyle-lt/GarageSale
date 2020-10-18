@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.grpc.ManagedChannelBuilder;
-//import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.exporters.jaeger.JaegerGrpcSpanExporter;
 import io.opentelemetry.exporters.logging.LoggingSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -24,7 +24,9 @@ public class OtelTracerConfig {
 		// ** Create Tracer SDK Management and Tracer
 		
 		// 0.8.0
-		final Tracer tracer = OpenTelemetrySdk.getTracerProvider().get("io.opentelemetry.trace.Tracer");	
+		//final Tracer tracer = OpenTelemetrySdk.getTracerProvider().get("io.opentelemetry.trace.Tracer");
+		// 0.8.0 Testing
+		final Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.trace.Tracer");
 		
 		// 0.9.1
 		//final TracerSdkManagement tracerSdkManagement = OpenTelemetrySdk.getTracerManagement();

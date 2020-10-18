@@ -35,6 +35,9 @@ import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 import reactor.core.publisher.Flux;
+import io.opentelemetry.trace.TracingContextUtils;
+
+import com.ktully.appd.otel.ui.HttpUtils;
 
 @Controller
 public class ItemController {
@@ -65,15 +68,18 @@ public class ItemController {
 	@Autowired
 	Tracer tracer;
 	
+	@Autowired
+	private HttpUtils httpUtils;
+	
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
+	private static final TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
 			logger.debug("RestTemplate - Adding Header with Value = " + value);
-			carrier.add(key, value);
+			carrier.set(key, value);
 		}
 	};
 	
@@ -81,7 +87,7 @@ public class ItemController {
 	 * Configuration for Context Propagation to be done via injection into WebClient
 	 * Builder headers
 	 */
-	TextMapPropagator.Setter<Builder> webClientSetter = new TextMapPropagator.Setter<Builder>() {
+	private static final TextMapPropagator.Setter<Builder> webClientSetter = new TextMapPropagator.Setter<Builder>() {
 		@Override
 		public void set(Builder carrier, String key, String value) {
 			logger.debug("WebClient - Adding Header with Key = " + key);
@@ -95,7 +101,8 @@ public class ItemController {
 
 		// Start a Parent Span for "/items"
 		Span parentSpan = tracer.spanBuilder("/items").setSpanKind(Span.Kind.CLIENT).startSpan();
-		try (Scope scope = tracer.withSpan(parentSpan)) {
+		//try (Scope scope = tracer.withSpan(parentSpan)) {
+		try (Scope scope = TracingContextUtils.currentContextWith(parentSpan)) {
 
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
@@ -110,7 +117,8 @@ public class ItemController {
 			// Start a Span for (and send) RestTemplate
 			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
-			try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+			try (Scope outgoingScope = TracingContextUtils.currentContextWith(restTemplateSpan)) {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger
@@ -122,19 +130,20 @@ public class ItemController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
+				// Moving to HttpUtils at some point, but not yet (for troubleshooting)
 				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 						httpHeadersSetter);
-				
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 
-				// Make outgoing call via RestTemplate
+				// Make outgoing call via RestTemplate - moved to HttpUtils
 				ResponseEntity<List<Item>> itemResponse = restTemplate.exchange(fullItemApiUrl + "/items",
 						HttpMethod.GET, entity, new ParameterizedTypeReference<List<Item>>() {
 						});
 
-				// Capture the result that could be passed to our ThymeLeaf view
+				// Capture the result that could be passed to our ThymeLeaf view - changed to capture return from HttpUtils
 				List<Item> listItems = itemResponse.getBody();
+				//List<Item> listItems = httpUtils.callEndpoint(fullItemApiUrl + "/items");
 			} catch (Exception e) {
 				restTemplateSpan.addEvent("error");
 				restTemplateSpan.addEvent(e.toString());

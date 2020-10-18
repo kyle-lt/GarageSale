@@ -23,6 +23,23 @@ import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.SpanContext;
 import io.opentelemetry.trace.Tracer;
 
+/* This class library was built in order to test centralizing the Context propagation injection
+ * that is used in the rest of the ui project.  It worked fine, but since the project is simple,
+ * I decided to leave the Context propagation in place, at the Controller(s) - most notably ItemController.
+ * 
+ * Also note, neither the Context propagation here, nor in the Controller, worked when moving from 
+ * version 0.8.0 to version 0.9.1.  For some reason, my TextMapPropagator.Setter code was never being
+ * executed after the move to 0.9.1.  I suspect that somehow I am not registering the TextMapPropagator, which
+ * changed to default to no-op across these versions, but looking at the samples online, I can't tell
+ * what I am doing wrong.  It works perfectly in 0.8.0, then magically stops working when I swap out the version
+ * to 0.9.1.  Everything else works fine (still collect spans, traces, they just aren't correlated...which is 
+ * kind of a big deal).
+ * 
+ * I am also going to pivot to use the Spring/SpringBoot Instrumentation libraries to see how they
+ * work since it's more likely that that'll replace most use cases for manual instrumentation and
+ * propagation anyway.
+ */
+
 @Component
 public class HttpUtils {
 	

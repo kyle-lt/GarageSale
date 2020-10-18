@@ -98,6 +98,24 @@
 			<artifactId>grpc-netty-shaded</artifactId>
 			<version>1.30.0</version>
 		</dependency>
+		
+		<!--  OpenTelemetry Instrumentation Library for Spring/SpringBoot & Jaeger -->
+		<!--  These are not yet in Maven Cetnral Repo, so I'm getting a warning in Eclipse -->
+		<!--  I added the repo here: /usr/local/Cellar/maven/3.6.3_1/libexec/conf/settings.xml -->
+		<!--  The project builds fine, I just have this annoying warning/error in the Eclipse UI -->
+		
+		<!-- opentelemetry starter for spring -->
+		<dependency>
+		    <groupId>io.opentelemetry.instrumentation</groupId>
+		    <artifactId>opentelemetry-spring-starter</artifactId>
+		    <version>0.8.0</version>
+		</dependency>
+		<!-- opentelemetry starter with jaeger -->
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-jaeger-exporter-starter</artifactId>
+			<version>0.8.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

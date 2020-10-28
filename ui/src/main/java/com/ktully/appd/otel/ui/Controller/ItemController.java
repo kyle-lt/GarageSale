@@ -68,8 +68,8 @@ public class ItemController {
 	@Autowired
 	Tracer tracer;
 	
-	@Autowired
-	private HttpUtils httpUtils;
+	//@Autowired
+	//private HttpUtils httpUtils;
 	
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection

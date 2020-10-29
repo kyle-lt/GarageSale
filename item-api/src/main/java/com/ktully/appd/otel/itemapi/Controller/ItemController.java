@@ -195,12 +195,15 @@ public class ItemController {
 
 		// debug
 		// headers.forEach((k,v) -> logger.debug("Key = " + k + ", Value = " = v));
-		for (Map.Entry<String, String> entry : headers.entrySet())
+		logger.debug("Incoming Request Headers from ui to item-api/distribute:");
+		for (Map.Entry<String, String> entry : headers.entrySet()) {
 			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-
+			logger.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+		}
+		
 		Context extractedContext = null;
 		try {
-			logger.debug("Trying to extact Context Propagation Headers");
+			logger.debug("Trying to extact Context Propagation Headers from ui to item-api/distribute.");
 			extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
 					getter);
 			logger.debug(extractedContext.toString());
@@ -223,8 +226,9 @@ public class ItemController {
 			HttpHeaders propagationHeaders = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("/todomvcui/Home/ToDo").setSpanKind(Span.Kind.CLIENT)
-					.startSpan();
+			//Span restTemplateSpan = tracer.spanBuilder("/todomvcui/Home/ToDo").setSpanKind(Span.Kind.CLIENT)
+			//		.startSpan();
+			Span restTemplateSpan = tracer.spanBuilder("/todomvcui/Home/ToDo").setSpanKind(Span.Kind.CLIENT).setParent(serverSpan).startSpan();
 			// try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 			try (Scope outgoingScope = TracingContextUtils.currentContextWith(restTemplateSpan)) {
 				// Add some important info to our Span

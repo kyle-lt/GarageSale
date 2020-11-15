@@ -16,12 +16,30 @@ import org.springframework.web.client.RestTemplate;
 import com.ktully.appd.otel.ui.Controller.ItemController;
 import com.ktully.appd.otel.ui.Model.Item;
 
-import io.grpc.Context;
-import io.opentelemetry.OpenTelemetry;
+//import io.grpc.Context;
+// 0.8.0
+//import io.opentelemetry.OpenTelemetry;
+//import io.opentelemetry.context.propagation.TextMapPropagator;
+//import io.opentelemetry.trace.Span;
+//import io.opentelemetry.trace.SpanContext;
+//import io.opentelemetry.trace.Tracer;
+
+// 0.10.0
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.HttpTraceContext;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.SpanContext;
-import io.opentelemetry.trace.Tracer;
+//import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.TracerSdkManagement;
+import io.opentelemetry.sdk.trace.config.TraceConfig;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 /* This class library was built in order to test centralizing the Context propagation injection
  * that is used in the rest of the ui project.  It worked fine, but since the project is simple,
@@ -61,7 +79,10 @@ public class HttpUtils {
 
 	public HttpUtils(Tracer tracer) {
 		// textFormat = tracer.getTextMapPropagator();
-		textFormat = OpenTelemetry.getPropagators().getTextMapPropagator();
+		// 0.8.0
+		//textFormat = OpenTelemetry.getPropagators().getTextMapPropagator();
+		// 0.10.0
+		textFormat = OpenTelemetry.getGlobalPropagators().getTextMapPropagator();
 	}
 
 	public List<Item> callEndpoint(String url) throws Exception {

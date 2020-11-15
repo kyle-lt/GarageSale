@@ -20,13 +20,31 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.ktully.appd.otel.ui.Model.Item;
 
-import io.grpc.Context;
-import io.opentelemetry.OpenTelemetry;
+//import io.grpc.Context;
+// 0.8.0
+//import io.opentelemetry.OpenTelemetry;
+//import io.opentelemetry.context.Scope;
+//import io.opentelemetry.context.propagation.TextMapPropagator;
+//import io.opentelemetry.trace.Span;
+//import io.opentelemetry.trace.Tracer;
+//import io.opentelemetry.trace.TracingContextUtils;
+
+// 0.10.0
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.HttpTraceContext;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
-import io.opentelemetry.trace.TracingContextUtils;
+//import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.TracerSdkManagement;
+import io.opentelemetry.sdk.trace.config.TraceConfig;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 @Controller
 public class HomeController {
@@ -86,10 +104,13 @@ public class HomeController {
 		// Start a Span for (and send) RestTemplate
 		Span restTemplateSpan = tracer.spanBuilder("/item-api/distribute").setSpanKind(Span.Kind.CLIENT).startSpan();
 		// try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
-		try (Scope outgoingScope = TracingContextUtils.currentContextWith(restTemplateSpan)) {
+		// 0.8.0
+		// try (Scope outgoingScope =
+		// TracingContextUtils.currentContextWith(restTemplateSpan)) {
+		// 0.10.0
+		try (Scope outgoingScope = restTemplateSpan.makeCurrent()) {
 			// Add some important info to our Span
-			restTemplateSpan.addEvent("Calling item-api/distribute via RestTemplate"); // This ends up in "logs" section in
-																			// Jaeger
+			restTemplateSpan.addEvent("Calling item-api/distribute via RestTemplate"); 
 			// Add the attributes defined in the Semantic Conventions
 			restTemplateSpan.setAttribute("http.method", "GET");
 			restTemplateSpan.setAttribute("http.scheme", "http");
@@ -99,7 +120,13 @@ public class HomeController {
 			// Execute the header injection that we defined above in the Setter and
 			// create HttpEntity to hold the headers (and pass to RestTemplate)
 			// Moving to HttpUtils at some point, but not yet (for troubleshooting)
-			OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+			// 0.8.0
+			//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+
+			// 0.10.0
+			// Inject the request with the current Context/Span.
+			OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+
 			logger.debug("Injecting headers for call from GarageSale Home /distribute to item-api/distribute");
 			logger.debug("**** Here are the headers: " + headers.toString());
 			HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
@@ -107,7 +134,7 @@ public class HomeController {
 			// Make outgoing call via RestTemplate
 			ResponseEntity<String> response = restTemplate.exchange(fullItemApiUrl + "/distribute", HttpMethod.GET,
 					entity, String.class);
-			
+
 			// Capture the result that could be passed to our ThymeLeaf view - changed to
 			// capture return from HttpUtils
 			String responseString = response.getBody();

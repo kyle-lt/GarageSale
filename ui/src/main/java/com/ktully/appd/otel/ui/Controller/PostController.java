@@ -32,12 +32,31 @@ import com.google.gson.Gson;
 
 import com.ktully.appd.otel.ui.Model.Item;
 
-import io.grpc.Context;
-import io.opentelemetry.OpenTelemetry;
+//import io.grpc.Context;
+
+// 0.8.0
+//import io.opentelemetry.OpenTelemetry;
+//import io.opentelemetry.context.Scope;
+//import io.opentelemetry.context.propagation.TextMapPropagator;
+//import io.opentelemetry.trace.Span;
+//import io.opentelemetry.trace.Tracer;
+
+//0.10.0
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.HttpTraceContext;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
+//import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.TracerSdkManagement;
+import io.opentelemetry.sdk.trace.config.TraceConfig;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 @Controller
 public class PostController {
@@ -92,7 +111,10 @@ public class PostController {
 
 		// Start a Parent Span for "/items"
 		Span parentSpan = tracer.spanBuilder("/post").setSpanKind(Span.Kind.CLIENT).startSpan();
-		try (Scope scope = tracer.withSpan(parentSpan)) {
+		// 0.8.0
+		//try (Scope scope = tracer.withSpan(parentSpan)) {
+		// 0.10.0
+		try (Scope scope = parentSpan.makeCurrent()) {
 
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
@@ -119,7 +141,10 @@ public class PostController {
 			// Start a Span for (and send) RestTemplate
 			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
-			try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+			// 0.8.0
+			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
+			// 0.10.0
+			try (Scope outgoingScope = restTemplateSpan.makeCurrent()) {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger
@@ -127,8 +152,11 @@ public class PostController {
 
 				// Execute the header injection that we defined above in the Setter and
 				// create HttpEntity to hold the headers (and pass to RestTemplate)
-				OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
-						httpHeadersSetter);
+				// 0.8.0
+				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
+				//		httpHeadersSetter);
+				// 0.10.0
+				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				
 				// Add Content-Type Header
 				headers.add("Content-Type", "application/json");

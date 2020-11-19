@@ -9,8 +9,13 @@ import org.springframework.stereotype.Service;
 import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Repository.ItemRepository;
 
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
+// 0.8.0
+//import io.opentelemetry.trace.Span;
+//import io.opentelemetry.trace.Tracer;
+
+// 0.10.0
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 
 @Service
 public class ItemService {

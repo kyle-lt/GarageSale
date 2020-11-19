@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<bootstrap.version>4.2.1</bootstrap.version>
 	</properties>
 
 	<dependencies>
@@ -35,13 +36,14 @@
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-api</artifactId>
-			<version>0.8.0</version>
+			<version>0.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-sdk</artifactId>
-			<version>0.8.0</version>
+			<version>0.10.0</version>
 		</dependency>
+		<!-- 0.8.0
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporters-logging</artifactId>
@@ -51,6 +53,18 @@
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporters-jaeger</artifactId>
 			<version>0.8.0</version>
+		</dependency>
+		-->
+		<!-- 0.10.0 -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-logging</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-jaeger</artifactId>
+			<version>0.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
@@ -69,18 +83,21 @@
 		<!--  The project builds fine, I just have this annoying warning/error in the Eclipse UI -->
 		
 		<!-- opentelemetry starter for spring -->
+		<!--  Disabling for now because I don't really need it
 		<dependency>
 		    <groupId>io.opentelemetry.instrumentation</groupId>
 		    <artifactId>opentelemetry-spring-starter</artifactId>
-		    <version>0.8.0</version>
+		    <version>0.10.0</version>
 		</dependency>
+		-->
 		<!-- opentelemetry starter with jaeger -->
+		<!--  Disabling for now because I don't really need it
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
 			<artifactId>opentelemetry-jaeger-exporter-starter</artifactId>
 			<version>0.8.0</version>
 		</dependency>
-
+		-->
 		<!-- H2 DB -->
 		<dependency>
 			<groupId>com.h2database</groupId>

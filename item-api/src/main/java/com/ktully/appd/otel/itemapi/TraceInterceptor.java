@@ -12,24 +12,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ktully.appd.otel.itemapi.Controller.ItemController;
+//import com.ktully.appd.otel.itemapi.Controller.ItemController;
 
 import io.grpc.Context;
-import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.context.ContextUtils;
+//import io.opentelemetry.OpenTelemetry;
+//import io.opentelemetry.context.ContextUtils;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapPropagator;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
+//import io.opentelemetry.trace.Span;
+//import io.opentelemetry.trace.Tracer;
 
 /*
  * This is an attempt to handle context propagation at the request intercepter, 
  * rather than at each Controller.
  */
 
+// NOT USING RIGHT NOW!
+
 @Component
 public class TraceInterceptor implements HandlerInterceptor {
-
+/*
 	private static final Logger logger = LoggerFactory.getLogger(TraceInterceptor.class);
 
 	@Autowired
@@ -38,11 +40,12 @@ public class TraceInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
+*/
 		/*
 		 * Configuration for Context Propagation to be done via HttpServletRequest
 		 * extraction
 		 */
+/*
 		TextMapPropagator.Getter<HttpServletRequest> getter = new TextMapPropagator.Getter<HttpServletRequest>() {
 			@Override
 			public String get(HttpServletRequest carrier, String key) {
@@ -90,11 +93,12 @@ public class TraceInterceptor implements HandlerInterceptor {
     public void postHandle(
        HttpServletRequest request, HttpServletResponse response, Object handler,
        ModelAndView modelAndView) throws Exception {
-    	
+ */   	
 		/*
 		 * Configuration for Context Propagation to be done via HttpServletRequest
 		 * extraction
 		 */
+/*
 		TextMapPropagator.Setter<HttpServletResponse> setter = new TextMapPropagator.Setter<HttpServletResponse>() {
 			@Override
 			public void set(HttpServletResponse carrier, String key, String value) {
@@ -119,5 +123,5 @@ public class TraceInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
        Object handler, Exception exception) throws Exception {
        }
-
+*/
 }

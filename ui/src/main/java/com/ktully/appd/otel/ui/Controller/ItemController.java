@@ -42,21 +42,21 @@ import reactor.core.publisher.Flux;
 // 0.10.0
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.StatusCode;
+//import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.propagation.HttpTraceContext;
+//import io.opentelemetry.api.trace.propagation.HttpTraceContext;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.DefaultContextPropagators;
+//import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 //import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.sdk.trace.TracerSdkManagement;
-import io.opentelemetry.sdk.trace.config.TraceConfig;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+//import io.opentelemetry.sdk.OpenTelemetrySdk;
+//import io.opentelemetry.sdk.trace.SpanProcessor;
+//import io.opentelemetry.sdk.trace.TracerSdkManagement;
+//import io.opentelemetry.sdk.trace.config.TraceConfig;
+//import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
-import com.ktully.appd.otel.ui.HttpUtils;
+//import com.ktully.appd.otel.ui.HttpUtils;
 
 @Controller
 public class ItemController {

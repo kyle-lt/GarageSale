@@ -118,8 +118,7 @@
 		<!--  The project builds fine, I just have this annoying warning/error in the Eclipse UI -->
 		
 		<!-- opentelemetry starter for spring -->
-		<!--  Disabling for now because of dependency bug
-		java.lang.ClassNotFoundException: io.opentelemetry.common.ReadableAttributes
+		<!--  Disabling for now because I don't really need it
 		<dependency>
 		    <groupId>io.opentelemetry.instrumentation</groupId>
 		    <artifactId>opentelemetry-spring-starter</artifactId>
@@ -127,8 +126,7 @@
 		</dependency>
 		-->
 		<!-- opentelemetry starter with jaeger -->
-		<!--  Disabling for now because of dependency bug
-		java.lang.ClassNotFoundException: io.opentelemetry.common.ReadableAttributes
+		<!--  Disabling for now because I don't really need it
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
 			<artifactId>opentelemetry-jaeger-exporter-starter</artifactId>

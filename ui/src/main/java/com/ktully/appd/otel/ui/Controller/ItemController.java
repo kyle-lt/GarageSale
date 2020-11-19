@@ -119,7 +119,7 @@ public class ItemController {
 	public String items(Model model) {
 
 		// Start a Parent Span for "/items"
-		Span parentSpan = tracer.spanBuilder("/items").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("GET /items").setSpanKind(Span.Kind.CLIENT).startSpan();
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.8.0
 		//try (Scope scope = TracingContextUtils.currentContextWith(parentSpan)) {
@@ -137,7 +137,7 @@ public class ItemController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("GET /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 			// 0.8.0

@@ -110,7 +110,7 @@ public class PostController {
 		// Start with RestTemplate, the add webClient, then add Otel
 
 		// Start a Parent Span for "/items"
-		Span parentSpan = tracer.spanBuilder("/post").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("POST /post").setSpanKind(Span.Kind.CLIENT).startSpan();
 		// 0.8.0
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.10.0
@@ -139,7 +139,7 @@ public class PostController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("POST /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {

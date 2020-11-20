@@ -3,7 +3,7 @@ version: "3.2"
 services:
   ui:
     #build: ./ui/docker
-    image: kjtully/garagesale-ui:20.9
+    image: kjtully/garagesale-ui:20.10
     labels:
       desciption: "GarageSale UI"
     environment:
@@ -44,7 +44,7 @@ services:
 
   item-api:
     #build: ./item-api/docker
-    image: kjtully/garagesale-item-api:20.9
+    image: kjtully/garagesale-item-api:20.10
     labels:
       desciption: "GarageSale Item API"
     environment:

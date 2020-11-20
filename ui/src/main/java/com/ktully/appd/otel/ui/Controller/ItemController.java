@@ -126,6 +126,11 @@ public class ItemController {
 		// 0.10.0
 		try (Scope scope = parentSpan.makeCurrent()) {
 
+			// Add the attributes defined in the Semantic Conventions
+			parentSpan.setAttribute("http.method", "GET");
+			parentSpan.setAttribute("http.scheme", "http");
+			parentSpan.setAttribute("http.host", ":8080");
+			parentSpan.setAttribute("http.target", "/items");
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
 
@@ -137,7 +142,7 @@ public class ItemController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("GET /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("GET /item-api/items:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 			// 0.8.0
@@ -150,7 +155,7 @@ public class ItemController {
 				// Add the attributes defined in the Semantic Conventions
 				restTemplateSpan.setAttribute("http.method", "GET");
 				restTemplateSpan.setAttribute("http.scheme", "http");
-				restTemplateSpan.setAttribute("http.host", "items:8080");
+				restTemplateSpan.setAttribute("http.host", "item-api:8081");
 				restTemplateSpan.setAttribute("http.target", "/items");
 
 				// Execute the header injection that we defined above in the Setter and
@@ -197,7 +202,7 @@ public class ItemController {
 			Builder webClientBuilder = WebClient.builder();
 
 			// Start a Span for (and send) WebClient
-			Span webClientSpan = tracer.spanBuilder("/item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 			// 0.10.0
@@ -207,7 +212,7 @@ public class ItemController {
 				// Add the attributes defined in the Semantic Conventions
 				webClientSpan.setAttribute("http.method", "GET");
 				webClientSpan.setAttribute("http.scheme", "http");
-				webClientSpan.setAttribute("http.host", "items:8080");
+				webClientSpan.setAttribute("http.host", "item-api:8081");
 				webClientSpan.setAttribute("http.target", "/items");
 
 				// Execute the header injection that we defined above in the Setter and
@@ -263,12 +268,17 @@ public class ItemController {
 	public String item(@PathVariable("id") String id, Model model) {
 
 		// Start a Parent Span for "/items/{id}"
-		Span parentSpan = tracer.spanBuilder("/item/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("GET /item/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
 		// 0.8.0
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.10.0
 		try (Scope scope = parentSpan.makeCurrent()) {
 
+			// Add the attributes defined in the Semantic Conventions
+			parentSpan.setAttribute("http.method", "GET");
+			parentSpan.setAttribute("http.scheme", "http");
+			parentSpan.setAttribute("http.host", ":8080");
+			parentSpan.setAttribute("http.target", "/item/{id}");
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
 
@@ -280,7 +290,7 @@ public class ItemController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("/item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("GET /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
 					.startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
@@ -292,7 +302,7 @@ public class ItemController {
 				// Add the attributes defined in the Semantic Conventions
 				restTemplateSpan.setAttribute("http.method", "GET");
 				restTemplateSpan.setAttribute("http.scheme", "http");
-				restTemplateSpan.setAttribute("http.host", "item:8080");
+				restTemplateSpan.setAttribute("http.host", "item-api:8081");
 				restTemplateSpan.setAttribute("http.target", "/item/{id}");
 
 				// Execute the header injection that we defined above in the Setter and
@@ -344,7 +354,7 @@ public class ItemController {
 			Builder webClientBuilder = WebClient.builder();
 
 			// Start a Span for (and send) WebClient
-			Span webClientSpan = tracer.spanBuilder("/item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 			// 0.10.0
@@ -354,7 +364,7 @@ public class ItemController {
 				// Add the attributes defined in the Semantic Conventions
 				webClientSpan.setAttribute("http.method", "GET");
 				webClientSpan.setAttribute("http.scheme", "http");
-				webClientSpan.setAttribute("http.host", "item:8080");
+				webClientSpan.setAttribute("http.host", "item-api:8081");
 				webClientSpan.setAttribute("http.target", "/item/{id}");
 
 				// Execute the header injection that we defined above in the Setter and

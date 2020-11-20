@@ -116,6 +116,11 @@ public class PostController {
 		// 0.10.0
 		try (Scope scope = parentSpan.makeCurrent()) {
 
+			// Add the attributes defined in the Semantic Conventions
+			parentSpan.setAttribute("http.method", "POST");
+			parentSpan.setAttribute("http.scheme", "http");
+			parentSpan.setAttribute("http.host", ":8080");
+			parentSpan.setAttribute("http.target", "/post");
 			// Build full URI for API call
 			String fullItemApiUrl = "http://" + itemApiUrl + ":" + itemApiPort;
 
@@ -145,6 +150,13 @@ public class PostController {
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 			// 0.10.0
 			try (Scope outgoingScope = restTemplateSpan.makeCurrent()) {
+				
+				// Add the attributes defined in the Semantic Conventions
+				restTemplateSpan.setAttribute("http.method", "POST");
+				restTemplateSpan.setAttribute("http.scheme", "http");
+				restTemplateSpan.setAttribute("http.host", "item-api:8081");
+				restTemplateSpan.setAttribute("http.target", "/item");				
+				
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling item-api via RestTemplate"); // This ends up in "logs" section in
 																				// Jaeger

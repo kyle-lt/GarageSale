@@ -30,6 +30,7 @@ import com.ktully.appd.otel.ui.Model.Item;
 
 //import io.grpc.Context;
 import reactor.core.publisher.Flux;
+import io.opentelemetry.api.GlobalOpenTelemetry;
 
 // 0.8.0
 //import io.opentelemetry.OpenTelemetry;
@@ -40,7 +41,7 @@ import reactor.core.publisher.Flux;
 //import io.opentelemetry.trace.TracingContextUtils;
 
 // 0.10.0
-import io.opentelemetry.api.OpenTelemetry;
+//import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 //import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -165,7 +166,9 @@ public class ItemController {
 				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 				//		httpHeadersSetter);
 				// 0.10.0
-				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				// 0.13.1
+				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
@@ -221,7 +224,9 @@ public class ItemController {
 				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder,
 				//		webClientSetter);
 				// 0.10.0
-				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
+				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
+				// 0.13.1
+				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
 				
 				// Make outgoing call via RestTemplate
 				WebClient webClient = webClientBuilder.baseUrl(fullItemApiUrl)
@@ -311,7 +316,10 @@ public class ItemController {
 				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers,
 				//		httpHeadersSetter);
 				// 0.10.0
-				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				// 0.13.1
+				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 
@@ -373,7 +381,9 @@ public class ItemController {
 				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder,
 				//			webClientSetter);
 				// 0.10.0
-				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
+				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
+				// 0.13.1
+				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), webClientBuilder, webClientSetter);
 				
 				// Make outgoing call via RestTemplate
 				WebClient webClient = webClientBuilder.baseUrl(fullItemApiUrl)

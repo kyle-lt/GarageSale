@@ -1,12 +1,12 @@
 package com.ktully.appd.otel.ui.Controller;
 
-import java.util.List;
+//import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+//import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.ktully.appd.otel.ui.Model.Item;
+//import com.ktully.appd.otel.ui.Model.Item;
 
 //import io.grpc.Context;
 // 0.8.0
@@ -30,21 +30,24 @@ import com.ktully.appd.otel.ui.Model.Item;
 //import io.opentelemetry.trace.TracingContextUtils;
 
 // 0.10.0
-import io.opentelemetry.api.OpenTelemetry;
+//import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.StatusCode;
+//import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.propagation.HttpTraceContext;
+//import io.opentelemetry.api.trace.propagation.HttpTraceContext;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.DefaultContextPropagators;
+//import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 //import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.sdk.trace.TracerSdkManagement;
-import io.opentelemetry.sdk.trace.config.TraceConfig;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+//import io.opentelemetry.sdk.OpenTelemetrySdk;
+//import io.opentelemetry.sdk.trace.SpanProcessor;
+//import io.opentelemetry.sdk.trace.TracerSdkManagement;
+//import io.opentelemetry.sdk.trace.config.TraceConfig;
+//import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+
+//0.13.1
+import io.opentelemetry.api.GlobalOpenTelemetry;
 
 @Controller
 public class HomeController {
@@ -125,7 +128,9 @@ public class HomeController {
 
 			// 0.10.0
 			// Inject the request with the current Context/Span.
-			OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+			//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+			// 0.13.1
+			GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 
 			logger.debug("Injecting headers for call from GarageSale Home /distribute to item-api/distribute");
 			logger.debug("**** Here are the headers: " + headers.toString());

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: kjtully/garagesale-item-api:20.6
+        image: kjtully/garagesale-item-api:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8081

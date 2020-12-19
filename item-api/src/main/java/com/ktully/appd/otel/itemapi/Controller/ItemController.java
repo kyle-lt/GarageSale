@@ -22,31 +22,14 @@ import org.springframework.web.client.RestTemplate;
 import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Service.ItemService;
 
-
-//0.8.0
-//import io.opentelemetry.OpenTelemetry;
-//import io.opentelemetry.context.Scope;
-//import io.opentelemetry.context.propagation.TextMapPropagator;
-//import io.opentelemetry.trace.Span;
-//import io.opentelemetry.trace.Tracer;
-//import io.opentelemetry.trace.TracingContextUtils;
-
-//0.10.0
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-//import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
-//import io.opentelemetry.api.trace.propagation.HttpTraceContext;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-//import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
-//import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-//import io.opentelemetry.sdk.OpenTelemetrySdk;
-//import io.opentelemetry.sdk.trace.SpanProcessor;
-//import io.opentelemetry.sdk.trace.TracerSdkManagement;
-//import io.opentelemetry.sdk.trace.config.TraceConfig;
-//import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+
 
 @RestController
 public class ItemController {
@@ -102,22 +85,19 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			// 0.8.0
-			//extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
-			//		getter);
 			// 0.10.0
-			extractedContext = OpenTelemetry.getGlobalPropagators()
-		              .getTextMapPropagator()
-		              .extract(Context.current(), headers, getter);
+			//extractedContext = OpenTelemetry.getGlobalPropagators()
+		      //        .getTextMapPropagator()
+		        //      .extract(Context.current(), headers, getter);
+			// 0.13.1
+			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+					.extract(Context.current(), headers, getter);
 			
 			logger.debug(extractedContext.toString());
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
 		}
-
-		// 0.8.0
-		//Span serverSpan = null;
-		//try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
+		
 		// 0.10.0
 		Span serverSpan = tracer.spanBuilder("GET /item-api/items").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
@@ -154,19 +134,17 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			// 0.8.0
-			//extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
-			//		getter);
 			// 0.10.0
-			extractedContext = OpenTelemetry.getGlobalPropagators()
-		              .getTextMapPropagator()
-		              .extract(Context.current(), headers, getter);
+			//extractedContext = OpenTelemetry.getGlobalPropagators()
+		      //        .getTextMapPropagator()
+		        //      .extract(Context.current(), headers, getter);
+			// 0.13.1
+			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+					.extract(Context.current(), headers, getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
 		}
 
-		// 0.8.0
-		//Span serverSpan = null;
 		//try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
 		// 0.10.0
 		Span serverSpan = tracer.spanBuilder("GET /item-api/item/{id}").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
@@ -202,20 +180,17 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers");
-			// 0.8.0
-			//extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
-			//		getter);
 			// 0.10.0
-			extractedContext = OpenTelemetry.getGlobalPropagators()
-		              .getTextMapPropagator()
-		              .extract(Context.current(), headers, getter);
+			//extractedContext = OpenTelemetry.getGlobalPropagators()
+		      //        .getTextMapPropagator()
+		        //      .extract(Context.current(), headers, getter);
+			// 0.13.1
+			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+					.extract(Context.current(), headers, getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
 		}
 
-		// 0.8.0
-		//Span serverSpan = null;
-		//try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
 		// 0.10.0
 		Span serverSpan = tracer.spanBuilder("POST /item-api/item").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
@@ -253,21 +228,19 @@ public class ItemController {
 		Context extractedContext = null;
 		try {
 			logger.debug("Trying to extact Context Propagation Headers from ui to item-api/distribute.");
-			// 0.8.0
-			//extractedContext = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), headers,
-			//		getter);
 			// 0.10.0
-			extractedContext = OpenTelemetry.getGlobalPropagators()
-		              .getTextMapPropagator()
-		              .extract(Context.current(), headers, getter);
+			//extractedContext = OpenTelemetry.getGlobalPropagators()
+		      //        .getTextMapPropagator()
+		        //      .extract(Context.current(), headers, getter);
+			// 0.13.1
+			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+					.extract(Context.current(), headers, getter);
+			
 			logger.debug(extractedContext.toString());
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
 		}
 
-		// 0.8.0
-		//Span serverSpan = null;
-		//try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
 		// 0.10.0
 		Span serverSpan = tracer.spanBuilder("GET /distribute").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
@@ -309,7 +282,9 @@ public class ItemController {
 				//OpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), propagationHeaders,
 				//		httpHeadersSetter);
 				// 0.10.0
-				OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				// 0.13.1
+				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				logger.debug("Injecting headers for call from GarageSale item-api/distribute to todomvcui/Home/ToDo");
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", propagationHeaders);

@@ -1,21 +1,9 @@
-version: '3.4'
-
-networks:
-  monitoring:
-    external: true
-
-# logging section
-x-logging: 
-  &loki-logging
-  driver: loki
-  options:
-    loki-url: http://host.docker.internal:3100/loki/api/v1/push
+version: "3.2"
 
 services:
   ui:
-    build: ./ui/docker
-    image: kjtully/garagesale-ui:latest
-    container_name: ui
+    #build: ./ui/docker
+    image: kjtully/garagesale-ui:20.10
     labels:
       desciption: "GarageSale UI"
     environment:
@@ -43,10 +31,6 @@ services:
       DOCKER_HOSTNAME: "$DOCKER_HOSTNAME"
     ports:
       - "8080:8080"
-    networks:
-      - monitoring
-      - default
-    logging: *loki-logging
     deploy:
       resources:
         limits:
@@ -59,9 +43,8 @@ services:
           memory: 256M
 
   item-api:
-    build: ./item-api/docker
-    image: kjtully/garagesale-item-api:latest
-    container_name: itemapi
+    #build: ./item-api/docker
+    image: kjtully/garagesale-item-api:20.10
     labels:
       desciption: "GarageSale Item API"
     environment:
@@ -80,10 +63,6 @@ services:
       #APPDYNAMICS_NETVIZ_AGENT_PORT: "$APPDYNAMICS_NETVIZ_AGENT_PORT"
     ports:
       - "8081:8081"
-    networks:
-      - monitoring
-      - default
-    logging: *loki-logging
     deploy:
       resources:
         limits:
@@ -95,43 +74,38 @@ services:
           #NanoCPUs: '250000000'
           memory: 256M
 
-  # AppDynamics Machine Agent - Moved to "monitoring" Compose service
-  #appd-machine:
-    #image: appdynamics/machine-agent-analytics:latest
-    #container_name: appdmachine
-    #environment:
-      #APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: "$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
-      #APPDYNAMICS_AGENT_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_ACCOUNT_NAME"
-      #APPDYNAMICS_CONTROLLER_HOST_NAME: "$APPDYNAMICS_CONTROLLER_HOST_NAME"
-      #APPDYNAMICS_CONTROLLER_PORT: "$APPDYNAMICS_CONTROLLER_PORT"
-      #APPDYNAMICS_CONTROLLER_SSL_ENABLED: "$APPDYNAMICS_CONTROLLER_SSL_ENABLED"
-      #APPDYNAMICS_SIM_ENABLED: "$APPDYNAMICS_SIM_ENABLED"
-      #APPDYNAMICS_DOCKER_ENABLED: "$APPDYNAMICS_DOCKER_ENABLED"
-      #APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID: "$APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID"
+  appd-machine:
+    image: appdynamics/machine-agent-analytics:latest
+    environment:
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: "$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_ACCOUNT_NAME"
+      APPDYNAMICS_CONTROLLER_HOST_NAME: "$APPDYNAMICS_CONTROLLER_HOST_NAME"
+      APPDYNAMICS_CONTROLLER_PORT: "$APPDYNAMICS_CONTROLLER_PORT"
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: "$APPDYNAMICS_CONTROLLER_SSL_ENABLED"
+      APPDYNAMICS_SIM_ENABLED: "$APPDYNAMICS_SIM_ENABLED"
+      APPDYNAMICS_DOCKER_ENABLED: "$APPDYNAMICS_DOCKER_ENABLED"
+      APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID: "$APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID"
       #EVENT_ENDPOINT: "$EVENT_ENDPOINT"
       #APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME"
-      #APPDYNAMICS_AGENT_UNIQUE_HOST_ID: "$APPDYNAMICS_AGENT_UNIQUE_HOST_ID"
-    #networks:
-      #- default
-    #volumes:
-      #- /proc:/hostroot/proc:ro
-      #- /sys:/hostroot/sys:ro
-      #- /etc:/hostroot/etc:ro
-      #- /var/run/docker.sock:/var/run/docker.sock
+      APPDYNAMICS_AGENT_UNIQUE_HOST_ID: "$APPDYNAMICS_AGENT_UNIQUE_HOST_ID"
+    volumes:
+      - /proc:/hostroot/proc:ro
+      - /sys:/hostroot/sys:ro
+      - /etc:/hostroot/etc:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
-  #appd-netviz:
-    #image: appdynamics/machine-agent-netviz:latest
-    #network_mode: "host"
-    #ports:
-      #- "3892:3892"
-    #cap_add:
-      #- NET_ADMIN
-      #- NET_RAW
+  appd-netviz:
+    image: appdynamics/machine-agent-netviz:latest
+    network_mode: "host"
+    ports:
+      - "3892:3892"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
 
-  # JAEGER - Moved to ~/Local_Projects/monitoring
-  #jaeger:
-    #image: jaegertracing/all-in-one:latest
-    #ports:
-      #- "6831:6831/udp"
-      #- "16686:16686"
-      #- "14250:14250"
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "14250:14250"

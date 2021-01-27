@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Service.ItemService;
+import com.ktully.appd.otel.itemapi.OtelTracerConfig;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
@@ -39,8 +40,15 @@ public class ItemController {
 	@Autowired
 	ItemService itemService;
 
-	@Autowired
-	Tracer tracer;
+	//@Autowired
+	//Tracer tracer;
+	
+	//@Autowired
+	//static OpenTelemetry openTelemetry;
+	private static final OpenTelemetry openTelemetry = OtelTracerConfig.OpenTelemetryConfig();
+	
+	private static final Tracer tracer =
+		      openTelemetry.getTracer("com.ktully.appd.otel.itemapi");
 
 	/*
 	 * Configuration for Context Propagation to be done via @RequestHeader
@@ -90,7 +98,10 @@ public class ItemController {
 		      //        .getTextMapPropagator()
 		        //      .extract(Context.current(), headers, getter);
 			// 0.13.1
-			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//		.extract(Context.current(), headers, getter);
+			// 0.14.1
+			extractedContext = openTelemetry.getPropagators().getTextMapPropagator()
 					.extract(Context.current(), headers, getter);
 			
 			logger.debug(extractedContext.toString());
@@ -116,6 +127,13 @@ public class ItemController {
 			//try (Scope itemServiceScope = tracer.withSpan(serverSpan)) {
 			//	items = itemService.getAllItems();
 			//}
+		    // 0.14.1
+			//Span itemServiceSpan = tracer.spanBuilder("itemService.getAllItems").setParent(Context.current()).setSpanKind(Span.Kind.SERVER).startSpan();
+			Span itemServiceSpan = tracer.spanBuilder("itemService.getAllItems").setSpanKind(Span.Kind.SERVER).startSpan();
+			//try (Scope itemServiceScope = itemServiceSpan.makeCurrent()){
+			items = itemService.getAllItems();
+			//}
+			itemServiceSpan.end();
 			return items;
 		} catch (Exception e) {
 			logger.error("Exception caught attempting to create Span", e);
@@ -139,7 +157,10 @@ public class ItemController {
 		      //        .getTextMapPropagator()
 		        //      .extract(Context.current(), headers, getter);
 			// 0.13.1
-			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//		.extract(Context.current(), headers, getter);
+			// 0.14.1
+			extractedContext = openTelemetry.getPropagators().getTextMapPropagator()
 					.extract(Context.current(), headers, getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
@@ -185,7 +206,10 @@ public class ItemController {
 		      //        .getTextMapPropagator()
 		        //      .extract(Context.current(), headers, getter);
 			// 0.13.1
-			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//		.extract(Context.current(), headers, getter);
+			// 0.14.1
+			extractedContext = openTelemetry.getPropagators().getTextMapPropagator()
 					.extract(Context.current(), headers, getter);
 		} catch (Exception e) {
 			logger.error("Exception caught while extracting Context Propagators", e);
@@ -233,7 +257,10 @@ public class ItemController {
 		      //        .getTextMapPropagator()
 		        //      .extract(Context.current(), headers, getter);
 			// 0.13.1
-			extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//extractedContext = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+			//		.extract(Context.current(), headers, getter);
+			// 0.14.1
+			extractedContext = openTelemetry.getPropagators().getTextMapPropagator()
 					.extract(Context.current(), headers, getter);
 			
 			logger.debug(extractedContext.toString());
@@ -284,7 +311,10 @@ public class ItemController {
 				// 0.10.0
 				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				// 0.13.1
-				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				//GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				// 0.14.1
+				openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				
 				logger.debug("Injecting headers for call from GarageSale item-api/distribute to todomvcui/Home/ToDo");
 				logger.debug("**** Here are the headers: " + headers.toString());
 				HttpEntity<String> entity = new HttpEntity<String>("parameters", propagationHeaders);

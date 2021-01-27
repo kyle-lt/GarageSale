@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.ktully.appd.otel.ui.OtelTracerConfig;
+
 //import com.ktully.appd.otel.ui.Model.Item;
 
 //import io.grpc.Context;
@@ -48,6 +50,7 @@ import io.opentelemetry.context.propagation.TextMapPropagator;
 
 //0.13.1
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 
 @Controller
 public class HomeController {
@@ -71,8 +74,15 @@ public class HomeController {
 	@Value("${appdbrumconfigbeaconhttps}")
 	private String appdbrumconfigbeaconhttps;
 
-	@Autowired
-	Tracer tracer;
+	//@Autowired
+	//Tracer tracer;
+	
+	//@Autowired
+	//static OpenTelemetry openTelemetry;
+	private static final OpenTelemetry openTelemetry = OtelTracerConfig.OpenTelemetryConfig();
+	
+	private static final Tracer tracer =
+		      openTelemetry.getTracer("com.ktully.appd.otel.ui");
 
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
@@ -130,7 +140,9 @@ public class HomeController {
 			// Inject the request with the current Context/Span.
 			//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 			// 0.13.1
-			GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+			//GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+			// 0.14.1
+			openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 
 			logger.debug("Injecting headers for call from GarageSale Home /distribute to item-api/distribute");
 			logger.debug("**** Here are the headers: " + headers.toString());

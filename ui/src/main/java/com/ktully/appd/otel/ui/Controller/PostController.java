@@ -29,10 +29,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.google.gson.Gson;
-
+import com.ktully.appd.otel.ui.OtelTracerConfig;
 import com.ktully.appd.otel.ui.Model.Item;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 
 //import io.grpc.Context;
 
@@ -84,8 +85,15 @@ public class PostController {
 	@Value("${appdbrumconfigbeaconhttps}")
 	private String appdbrumconfigbeaconhttps;
 
-	@Autowired
-	Tracer tracer;
+	//@Autowired
+	//Tracer tracer;
+	
+	//@Autowired
+	//static OpenTelemetry openTelemetry;
+	private static final OpenTelemetry openTelemetry = OtelTracerConfig.OpenTelemetryConfig();
+	
+	private static final Tracer tracer =
+		      openTelemetry.getTracer("com.ktully.appd.otel.ui");
 
 	@RequestMapping("/post")
 	public String post(Model model) {
@@ -172,7 +180,9 @@ public class PostController {
 				// 0.10.0
 				//OpenTelemetry.getGlobalPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				// 0.13.1
-				GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				//GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				// 0.14.1
+				openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				
 				// Add Content-Type Header
 				headers.add("Content-Type", "application/json");

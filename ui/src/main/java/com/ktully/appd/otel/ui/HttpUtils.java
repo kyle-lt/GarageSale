@@ -77,13 +77,17 @@ public class HttpUtils {
 
 	private TextMapPropagator textFormat;
 
+	/*
 	public HttpUtils(Tracer tracer) {
 		// textFormat = tracer.getTextMapPropagator();
 		// 0.8.0
 		//textFormat = OpenTelemetry.getPropagators().getTextMapPropagator();
 		// 0.10.0
-		textFormat = OpenTelemetry.getGlobalPropagators().getTextMapPropagator();
+		//textFormat = OpenTelemetry.getGlobalPropagators().getTextMapPropagator();
 	}
+	*/
+	
+	/*
 
 	public List<Item> callEndpoint(String url) throws Exception {
 		HttpHeaders headers = new HttpHeaders();
@@ -112,5 +116,6 @@ public class HttpUtils {
 
 		return itemResponse.getBody();
 	}
+	*/
 
 }

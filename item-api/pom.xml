@@ -36,12 +36,12 @@
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-api</artifactId>
-			<version>0.13.1</version>
+			<version>0.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-sdk</artifactId>
-			<version>0.13.1</version>
+			<version>0.14.1</version>
 		</dependency>
 		<!-- 0.8.0
 		<dependency>
@@ -59,12 +59,12 @@
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-logging</artifactId>
-			<version>0.13.1</version>
+			<version>0.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-jaeger</artifactId>
-			<version>0.13.1</version>
+			<version>0.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>

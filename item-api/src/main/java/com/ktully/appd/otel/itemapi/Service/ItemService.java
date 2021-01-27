@@ -6,8 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ktully.appd.otel.itemapi.OtelTracerConfig;
 import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Repository.ItemRepository;
+
+import io.opentelemetry.api.OpenTelemetry;
 
 // 0.8.0
 //import io.opentelemetry.trace.Span;
@@ -23,8 +26,15 @@ public class ItemService {
 	@Autowired
 	ItemRepository itemRepository;
 
-	@Autowired
-	Tracer tracer;
+	//@Autowired
+	//Tracer tracer;
+	
+	//@Autowired
+	//static OpenTelemetry openTelemetry;
+	private static final OpenTelemetry openTelemetry = OtelTracerConfig.OpenTelemetryConfig();
+	
+	private static final Tracer tracer =
+		      openTelemetry.getTracer("com.ktully.appd.otel.itemapi");
 
 	public List<ItemModel> getAllItems() {
 

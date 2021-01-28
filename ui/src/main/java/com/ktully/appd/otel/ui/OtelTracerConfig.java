@@ -5,22 +5,16 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.grpc.ManagedChannelBuilder;
-
 // 0.13.1
-import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter;
+//import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter;
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-//import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
-//import io.opentelemetry.sdk.trace.SpanProcessor;
-//import io.opentelemetry.sdk.trace.SdkTracerManagement;
 import io.opentelemetry.sdk.trace.config.TraceConfig;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-//import io.opentelemetry.api.GlobalOpenTelemetry;
 
 // 0.14.1
 import io.opentelemetry.api.OpenTelemetry;
@@ -29,7 +23,6 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 // OTLP Exporter
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 
-
 @Configuration
 public class OtelTracerConfig {
 
@@ -37,29 +30,28 @@ public class OtelTracerConfig {
 	//public Tracer OtelTracer() throws Exception {
 	public static OpenTelemetry OpenTelemetryConfig() {
 		
-		
+		// ** General Comments **
 		// Re-writing a lot of this code for changes put into effect for 0.14.1
-			// The original class returned a Tracer, but this time, we return the OpenTelemetrySDK
+		// The original class returned a Tracer, but this time, we return the OpenTelemetrySDK
 		
-		// COMMENTING OUT THE JAEGER EXPORTER, PUTTING IN PLACE THE OTLP COLLECTOR
 		// ** Create Jaeger Exporter **
+		// COMMENTING OUT THE JAEGER EXPORTER, PUTTING IN PLACE THE OTLP COLLECTOR
 		//JaegerGrpcSpanExporter jaegerExporter = JaegerGrpcSpanExporter.builder().setServiceName("garagesale-ui")
 		//		.setChannel(ManagedChannelBuilder.forAddress("jaeger", 14250).usePlaintext().build()).build();
 		
-	    OtlpGrpcSpanExporter spanExporter =
+	    // ** Create OTLP gRPC Span Exporter & BatchSpanProcessor **
+		OtlpGrpcSpanExporter spanExporter =
 	            OtlpGrpcSpanExporter.builder()
 	            	.setEndpoint("host.docker.internal:4317")
 	            	.setTimeout(2, TimeUnit.SECONDS).build();
 	        BatchSpanProcessor spanProcessor =
 	            BatchSpanProcessor.builder(spanExporter)
 	                .setScheduleDelay(100, TimeUnit.MILLISECONDS)
-	                .build();
-	        
-	   
+	                .build();	   
 		
 		// ** Create OpenTelemetry SDK **
 		// Use W3C Trace Context Propagation
-		// Use Jaeger & Logging Exporters
+		// Use OTLP & Logging Exporters
 		// Use AlwaysOn TraceConfig
 	    OpenTelemetrySdk openTelemetrySdk =
 	            OpenTelemetrySdk.builder()
@@ -67,14 +59,16 @@ public class OtelTracerConfig {
 	                .setTracerProvider(
 	                    SdkTracerProvider.builder()
 	                        //.addSpanProcessor(SimpleSpanProcessor.create(jaegerExporter)) // REMOVING JAEGER FOR OTLP
-	                    	.addSpanProcessor(spanProcessor)
+	                    	.addSpanProcessor(spanProcessor) // OTLP
 	                        .addSpanProcessor(SimpleSpanProcessor.create(new LoggingSpanExporter()))
 	                        .setTraceConfig(TraceConfig.builder().setSampler(Sampler.alwaysOn()).build())    
 	                        .build())
 	                .build();
-	    			//.buildAndRegisterGlobal();  // can/should I use this?
-		
+	    			//.buildAndRegisterGlobal();  // can/should I use this?  Maybe later...
+	    
 	    // ** Create Tracer **
+	    // Tracers are now being instantiated in each Controller - although I'd like to go back
+	    // to this sort of "global" Tracer instantiation - maybe later...
 	    // We are grabbing it from the OpenTelemetrySDK
 	    //final Tracer tracer = openTelemetrySdk.getTracer("io.opentelemetry.trace.Tracer");
 	    

@@ -43,27 +43,22 @@
 			<artifactId>opentelemetry-sdk</artifactId>
 			<version>0.14.1</version>
 		</dependency>
-		<!-- 0.8.0
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporters-logging</artifactId>
-			<version>0.8.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporters-jaeger</artifactId>
-			<version>0.8.0</version>
-		</dependency>
-		-->
-		<!-- 0.10.0 -->
+		<!-- Logging Exporter -->
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-logging</artifactId>
 			<version>0.14.1</version>
 		</dependency>
+		<!-- Jaeger Exporter -->
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-jaeger</artifactId>
+			<version>0.14.1</version>
+		</dependency>
+		<!-- OTLP Exporter -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-otlp</artifactId>
 			<version>0.14.1</version>
 		</dependency>
 		<dependency>

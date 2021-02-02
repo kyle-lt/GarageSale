@@ -72,12 +72,12 @@ public class ItemController {
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	private static final TextMapPropagator.Setter<Map<String, String>> httpHeadersSetter = new TextMapPropagator.Setter<Map<String, String>>() {
+	private static final TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
 		@Override
-		public void set(Map<String, String> carrier, String key, String value) {
+		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
 			logger.debug("RestTemplate - Adding Header with Value = " + value);
-			carrier.put(key, value);
+			carrier.set(key, value);
 		}
 	};
 
@@ -313,7 +313,7 @@ public class ItemController {
 				// 0.13.1
 				//GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
 				// 0.14.1
-				openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, httpHeadersSetter);
+				openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), propagationHeaders, httpHeadersSetter);
 				
 				logger.debug("Injecting headers for call from GarageSale item-api/distribute to todomvcui/Home/ToDo");
 				logger.debug("**** Here are the headers: " + headers.toString());

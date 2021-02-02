@@ -24,7 +24,8 @@ In order to run this project, you'll need:
 - OpenTelemetry Collector
   - Reference the [Otel Collector Demo](https://github.com/open-telemetry/opentelemetry-collector/tree/main/examples/demo)
   - Also, an example in this [Local Monitoring Stack](https://github.com/kyle-lt/local-monitoring-stack) Repo that uses a simple setup (no OpenTelemetry Collector Agent required)  
-  <br />
+  <br />  
+  
    > __Note:__  The Docker versions must support Docker Compose File version 3.2+
 
 ### Steps to Run

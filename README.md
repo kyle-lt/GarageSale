@@ -2,7 +2,7 @@
 ## Overview
 This project was developed in order to get hands-on experience instrumenting a Java Spring Boot application using the OpenTelemetry SDK by hand, as well as instrumenting with an Enterprise-class APM Platform (AppDynamics).
 
-It keeps up-to-date pretty well with the [OTel Releases](https://github.com/open-telemetry/opentelemetry-java/releases), and is currently using 0.14.1.
+It keeps up-to-date pretty well with the [OTel Releases](https://github.com/open-telemetry/opentelemetry-java/releases), and is currently using 0.15.0 (RC).
 
    > __Note:__  This project was built/tested only on Docker for Mac
 

@@ -11,13 +11,15 @@ import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.trace.config.TraceConfig;
+import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
+import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 //0.14.1
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 
 //OTLP Exporter
@@ -49,20 +51,30 @@ public class OtelTracerConfig {
 	                .setScheduleDelay(100, TimeUnit.MILLISECONDS)
 	                .build();
 		
-		// ** Create OpenTelemetry SDK **
-		// Use W3C Trace Context Propagation
+		// This was working using OTEL_RESOURCE_ATTRIBUTES env var, but apparently not anymore with 0.15.0
+	    Resource serviceNameResource =
+	                Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, "garagesale-itemapi",
+	                		ResourceAttributes.SERVICE_NAMESPACE, "kjt-OTel-GarageSale"));
+	        
+	    // ** Create OpenTelemetry SdkTracerProvider
 		// Use OTLP & Logging Exporters
+	    // Use Service Name Resource (and attributes) defined above
 		// Use AlwaysOn TraceConfig
+        SdkTracerProvider sdkTracerProvider =
+                SdkTracerProvider.builder()
+                    .addSpanProcessor(spanProcessor) // OTLP
+                    .addSpanProcessor(SimpleSpanProcessor.create(new LoggingSpanExporter()))
+                    .setResource(Resource.getDefault().merge(serviceNameResource))
+                    .setSampler(Sampler.alwaysOn())
+                    .build();
+	        
+	    // ** Create OpenTelemetry SDK **
+		// Use W3C Trace Context Propagation
+        // Use the SdkTracerProvider instantiated above
 	    OpenTelemetrySdk openTelemetrySdk =
 	            OpenTelemetrySdk.builder()
+                	.setTracerProvider(sdkTracerProvider)
 	            	.setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-	                .setTracerProvider(
-	                    SdkTracerProvider.builder()
-	                        //.addSpanProcessor(SimpleSpanProcessor.create(jaegerExporter)) // REMOVING JAEGER FOR OTLP
-	                    	.addSpanProcessor(spanProcessor) // OTLP
-	                        .addSpanProcessor(SimpleSpanProcessor.create(new LoggingSpanExporter()))
-	                        .setTraceConfig(TraceConfig.builder().setSampler(Sampler.alwaysOn()).build())    
-	                        .build())
 	                .build();
 	    			//.buildAndRegisterGlobal();  // can/should I use this?  Maybe later...
 		
@@ -73,8 +85,7 @@ public class OtelTracerConfig {
 	    //final Tracer tracer = openTelemetrySdk.getTracer("io.opentelemetry.trace.Tracer");
 	    
 	    //  ** Create Shutdown Hook **
-	    Runtime.getRuntime()
-	    .addShutdownHook(new Thread(() -> openTelemetrySdk.getTracerManagement().shutdown()));
+	    Runtime.getRuntime().addShutdownHook(new Thread(sdkTracerProvider::shutdown));
 	    
 	    return openTelemetrySdk;
 	    

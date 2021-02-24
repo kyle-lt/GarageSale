@@ -34,11 +34,12 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 //import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
+import io.opentelemetry.context.propagation.TextMapSetter;
 //import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 //import io.opentelemetry.sdk.trace.TracerSdkManagement;
-import io.opentelemetry.sdk.trace.config.TraceConfig;
+//import io.opentelemetry.sdk.trace.config.TraceConfig;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 /* This class library was built in order to test centralizing the Context propagation injection
@@ -63,7 +64,7 @@ public class HttpUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
-	private static final TextMapPropagator.Setter<HttpHeaders> setter = new TextMapPropagator.Setter<HttpHeaders>() {
+	private static final TextMapSetter<HttpHeaders> setter = new TextMapSetter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders headers, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);

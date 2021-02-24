@@ -23,13 +23,14 @@ import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Service.ItemService;
 import com.ktully.appd.otel.itemapi.OtelTracerConfig;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.TextMapPropagator;
+import io.opentelemetry.context.propagation.TextMapGetter;
+import io.opentelemetry.context.propagation.TextMapSetter;
 
 
 @RestController
@@ -54,7 +55,7 @@ public class ItemController {
 	 * Configuration for Context Propagation to be done via @RequestHeader
 	 * extraction
 	 */
-	TextMapPropagator.Getter<Map<String, String>> getter = new TextMapPropagator.Getter<Map<String, String>>() {
+	TextMapGetter<Map<String, String>> getter = new TextMapGetter<Map<String, String>>() {
 		@Override
 		public String get(Map<String, String> carrier, String key) {
 			logger.debug("Key = " + key);
@@ -72,7 +73,7 @@ public class ItemController {
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	private static final TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
+	private static final TextMapSetter<HttpHeaders> httpHeadersSetter = new TextMapSetter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -110,7 +111,7 @@ public class ItemController {
 		}
 		
 		// 0.10.0
-		Span serverSpan = tracer.spanBuilder("GET /item-api/items").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
+		Span serverSpan = tracer.spanBuilder("GET /item-api/items").setParent(extractedContext).setSpanKind(SpanKind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
 			logger.debug("Trying to build Span and then make DB call.");
 			// Add the attributes defined in the Semantic Conventions
@@ -129,7 +130,7 @@ public class ItemController {
 			//}
 		    // 0.14.1
 			//Span itemServiceSpan = tracer.spanBuilder("itemService.getAllItems").setParent(Context.current()).setSpanKind(Span.Kind.SERVER).startSpan();
-			Span itemServiceSpan = tracer.spanBuilder("itemService.getAllItems").setSpanKind(Span.Kind.SERVER).startSpan();
+			Span itemServiceSpan = tracer.spanBuilder("itemService.getAllItems").setSpanKind(SpanKind.SERVER).startSpan();
 			//try (Scope itemServiceScope = itemServiceSpan.makeCurrent()){
 			items = itemService.getAllItems();
 			//}
@@ -168,7 +169,7 @@ public class ItemController {
 
 		//try (Scope scope = ContextUtils.withScopedContext(extractedContext)) {
 		// 0.10.0
-		Span serverSpan = tracer.spanBuilder("GET /item-api/item/{id}").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
+		Span serverSpan = tracer.spanBuilder("GET /item-api/item/{id}").setParent(extractedContext).setSpanKind(SpanKind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
 			logger.debug("Trying to build Span and then make DB call.");
 			// Add the attributes defined in the Semantic Conventions
@@ -216,7 +217,7 @@ public class ItemController {
 		}
 
 		// 0.10.0
-		Span serverSpan = tracer.spanBuilder("POST /item-api/item").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
+		Span serverSpan = tracer.spanBuilder("POST /item-api/item").setParent(extractedContext).setSpanKind(SpanKind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
 			// Automatically use the extracted SpanContext as parent.
 			logger.debug("Trying to build Span and then make DB call.");
@@ -269,7 +270,7 @@ public class ItemController {
 		}
 
 		// 0.10.0
-		Span serverSpan = tracer.spanBuilder("GET /distribute").setParent(extractedContext).setSpanKind(Span.Kind.SERVER).startSpan();
+		Span serverSpan = tracer.spanBuilder("GET /distribute").setParent(extractedContext).setSpanKind(SpanKind.SERVER).startSpan();
 		try (Scope scope = serverSpan.makeCurrent()) {
 			logger.debug("Trying to build Span and then make RestTemplate call to .NET Core App.");
 			// Add the attributes defined in the Semantic Conventions
@@ -290,7 +291,7 @@ public class ItemController {
 			//try (Scope outgoingScope = TracingContextUtils.currentContextWith(restTemplateSpan)) {
 			
 			// 0.10.0
-			Span restTemplateSpan = tracer.spanBuilder("GET /todomvcui/Home/ToDo").setSpanKind(Span.Kind.CLIENT).startSpan();
+			Span restTemplateSpan = tracer.spanBuilder("GET /todomvcui/Home/ToDo").setSpanKind(SpanKind.CLIENT).startSpan();
 			try (Scope outgoingScope = restTemplateSpan.makeCurrent()) {
 				// Add some important info to our Span
 				restTemplateSpan.addEvent("Calling todomvcui/Home/ToDo via RestTemplate"); // This ends up in "logs"

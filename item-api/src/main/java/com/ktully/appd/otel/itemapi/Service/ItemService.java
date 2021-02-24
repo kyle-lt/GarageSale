@@ -11,13 +11,8 @@ import com.ktully.appd.otel.itemapi.Model.ItemModel;
 import com.ktully.appd.otel.itemapi.Repository.ItemRepository;
 
 import io.opentelemetry.api.OpenTelemetry;
-
-// 0.8.0
-//import io.opentelemetry.trace.Span;
-//import io.opentelemetry.trace.Tracer;
-
-// 0.10.0
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 
 @Service
@@ -39,7 +34,7 @@ public class ItemService {
 	public List<ItemModel> getAllItems() {
 
 		// Start a Span for ItemService
-		Span itemServiceSpan = tracer.spanBuilder("/item-api/items:getAllItems").setSpanKind(Span.Kind.SERVER)
+		Span itemServiceSpan = tracer.spanBuilder("/item-api/items:getAllItems").setSpanKind(SpanKind.SERVER)
 				.startSpan();
 		itemServiceSpan.addEvent("Calling getAllItems()"); // This ends up in "logs" section in Jaeger
 		itemServiceSpan.setAttribute("getAllItems-Key", "getAllItems-Value");

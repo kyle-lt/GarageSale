@@ -1,12 +1,8 @@
 package com.ktully.appd.otel.ui.Controller;
 
-//import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,36 +16,12 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.ktully.appd.otel.ui.OtelTracerConfig;
 
-//import com.ktully.appd.otel.ui.Model.Item;
-
-//import io.grpc.Context;
-// 0.8.0
-//import io.opentelemetry.OpenTelemetry;
-//import io.opentelemetry.context.Scope;
-//import io.opentelemetry.context.propagation.TextMapPropagator;
-//import io.opentelemetry.trace.Span;
-//import io.opentelemetry.trace.Tracer;
-//import io.opentelemetry.trace.TracingContextUtils;
-
-// 0.10.0
-//import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-//import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
-//import io.opentelemetry.api.trace.propagation.HttpTraceContext;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-//import io.opentelemetry.context.propagation.DefaultContextPropagators;
-import io.opentelemetry.context.propagation.TextMapPropagator;
-//import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-//import io.opentelemetry.sdk.OpenTelemetrySdk;
-//import io.opentelemetry.sdk.trace.SpanProcessor;
-//import io.opentelemetry.sdk.trace.TracerSdkManagement;
-//import io.opentelemetry.sdk.trace.config.TraceConfig;
-//import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-
-//0.13.1
-import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.context.propagation.TextMapSetter;
 import io.opentelemetry.api.OpenTelemetry;
 
 @Controller
@@ -87,7 +59,7 @@ public class HomeController {
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	private static final TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
+	private static final TextMapSetter<HttpHeaders> httpHeadersSetter = new TextMapSetter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -115,7 +87,7 @@ public class HomeController {
 		HttpHeaders headers = new HttpHeaders();
 
 		// Start a Span for (and send) RestTemplate
-		Span restTemplateSpan = tracer.spanBuilder("/item-api/distribute").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span restTemplateSpan = tracer.spanBuilder("/item-api/distribute").setSpanKind(SpanKind.CLIENT).startSpan();
 		// try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 		// 0.8.0
 		// try (Scope outgoingScope =

@@ -47,6 +47,7 @@ import io.opentelemetry.api.OpenTelemetry;
 //0.10.0
 //import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 //import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 //import io.opentelemetry.api.trace.propagation.HttpTraceContext;
@@ -54,6 +55,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 //import io.opentelemetry.context.propagation.DefaultContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
+import io.opentelemetry.context.propagation.TextMapSetter;
 //import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 //import io.opentelemetry.sdk.OpenTelemetrySdk;
 //import io.opentelemetry.sdk.trace.SpanProcessor;
@@ -120,7 +122,7 @@ public class PostController {
 		// Start with RestTemplate, the add webClient, then add Otel
 
 		// Start a Parent Span for "/items"
-		Span parentSpan = tracer.spanBuilder("POST /post").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("POST /post").setSpanKind(SpanKind.CLIENT).startSpan();
 		// 0.8.0
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.10.0
@@ -137,7 +139,7 @@ public class PostController {
 			/*
 			 * Configuration for Context Propagation to be done via HttpHeaders injection
 			 */
-			TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
+			TextMapSetter<HttpHeaders> httpHeadersSetter = new TextMapSetter<HttpHeaders>() {
 				@Override
 				public void set(HttpHeaders carrier, String key, String value) {
 					logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -154,7 +156,7 @@ public class PostController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("POST /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("POST /item-api:RestTemplate").setSpanKind(SpanKind.CLIENT)
 					.startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {

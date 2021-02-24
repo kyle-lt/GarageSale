@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -31,13 +30,13 @@ import com.ktully.appd.otel.ui.Model.Item;
 
 import reactor.core.publisher.Flux;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.TextMapPropagator;
+import io.opentelemetry.context.propagation.TextMapSetter;
 
 @Controller
 public class ItemController {
@@ -81,7 +80,7 @@ public class ItemController {
 	/*
 	 * Configuration for Context Propagation to be done via HttpHeaders injection
 	 */
-	private static final TextMapPropagator.Setter<HttpHeaders> httpHeadersSetter = new TextMapPropagator.Setter<HttpHeaders>() {
+	private static final TextMapSetter<HttpHeaders> httpHeadersSetter = new TextMapSetter<HttpHeaders>() {
 		@Override
 		public void set(HttpHeaders carrier, String key, String value) {
 			logger.debug("RestTemplate - Adding Header with Key = " + key);
@@ -94,7 +93,7 @@ public class ItemController {
 	 * Configuration for Context Propagation to be done via injection into WebClient
 	 * Builder headers
 	 */
-	private static final TextMapPropagator.Setter<Builder> webClientSetter = new TextMapPropagator.Setter<Builder>() {
+	private static final TextMapSetter<Builder> webClientSetter = new TextMapSetter<Builder>() {
 		@Override
 		public void set(Builder carrier, String key, String value) {
 			logger.debug("WebClient - Adding Header with Key = " + key);
@@ -107,7 +106,7 @@ public class ItemController {
 	public String items(Model model) {
 
 		// Start a Parent Span for "/items"
-		Span parentSpan = tracer.spanBuilder("GET /items").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("GET /items").setSpanKind(SpanKind.CLIENT).startSpan();
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.8.0
 		//try (Scope scope = TracingContextUtils.currentContextWith(parentSpan)) {
@@ -130,7 +129,7 @@ public class ItemController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("GET /item-api/items:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("GET /item-api/items:RestTemplate").setSpanKind(SpanKind.CLIENT)
 					.startSpan();
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
 			// 0.8.0
@@ -195,7 +194,7 @@ public class ItemController {
 			Builder webClientBuilder = WebClient.builder();
 
 			// Start a Span for (and send) WebClient
-			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(SpanKind.CLIENT).startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 			// 0.10.0
@@ -265,7 +264,7 @@ public class ItemController {
 	public String item(@PathVariable("id") String id, Model model) {
 
 		// Start a Parent Span for "/items/{id}"
-		Span parentSpan = tracer.spanBuilder("GET /item/{id}").setSpanKind(Span.Kind.CLIENT).startSpan();
+		Span parentSpan = tracer.spanBuilder("GET /item/{id}").setSpanKind(SpanKind.CLIENT).startSpan();
 		// 0.8.0
 		//try (Scope scope = tracer.withSpan(parentSpan)) {
 		// 0.10.0
@@ -287,7 +286,7 @@ public class ItemController {
 			HttpHeaders headers = new HttpHeaders();
 
 			// Start a Span for (and send) RestTemplate
-			Span restTemplateSpan = tracer.spanBuilder("GET /item-api:RestTemplate").setSpanKind(Span.Kind.CLIENT)
+			Span restTemplateSpan = tracer.spanBuilder("GET /item-api:RestTemplate").setSpanKind(SpanKind.CLIENT)
 					.startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(restTemplateSpan)) {
@@ -356,7 +355,7 @@ public class ItemController {
 			Builder webClientBuilder = WebClient.builder();
 
 			// Start a Span for (and send) WebClient
-			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(Span.Kind.CLIENT).startSpan();
+			Span webClientSpan = tracer.spanBuilder("GET /item-api:WebClient").setSpanKind(SpanKind.CLIENT).startSpan();
 			// 0.8.0
 			//try (Scope outgoingScope = tracer.withSpan(webClientSpan)) {
 			// 0.10.0

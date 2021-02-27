@@ -13,12 +13,12 @@ import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 //0.14.1
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 
@@ -51,11 +51,14 @@ public class OtelTracerConfig {
 	                .setScheduleDelay(100, TimeUnit.MILLISECONDS)
 	                .build();
 		
-		// This was working using OTEL_RESOURCE_ATTRIBUTES env var, but apparently not anymore with 0.15.0
+		// This was working using OTEL_RESOURCE_ATTRIBUTES env var, but apparently not anymore with 0.15.0 - haven't tried it in 1.0.0
+		AttributeKey<String> myServiceName = AttributeKey.stringKey("service.name");
+		AttributeKey<String> myServiceNamespace = AttributeKey.stringKey("service.namespace");
 	    Resource serviceNameResource =
-	                Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, "garagesale-itemapi",
-	                		ResourceAttributes.SERVICE_NAMESPACE, "kjt-OTel-GarageSale"));
+	                Resource.create(Attributes.of(myServiceName, "garagesale-itemapi",
+	                		myServiceNamespace, "kjt-OTel-GarageSale"));
 	        
+	    
 	    // ** Create OpenTelemetry SdkTracerProvider
 		// Use OTLP & Logging Exporters
 	    // Use Service Name Resource (and attributes) defined above

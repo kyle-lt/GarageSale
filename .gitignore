@@ -3,3 +3,5 @@
 docker-compose.yml_private
 kubernetes/ui-deployment.yaml_private
 kubernetes/item-api-deployment.yaml_private
+/target
+/bin
